@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Reflection;
+using System.Windows;
 using System.Windows.Forms;
 using LogWatcher.ViewModels;
 
@@ -7,16 +8,21 @@ namespace LogWatcher.Views
     public partial class MainWindow
     {
         private readonly MainWindowViewModel _viewModel;
-        private readonly string _mockFilePath = @"C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\MockFilesystem\dir\textfile.txt";
-
+        
         public MainWindow()
         {
             _viewModel = new MainWindowViewModel();
             InitializeComponent();
             DataContext = _viewModel;
-            TxtFilePath.Text = _mockFilePath;
+            TxtFilePath.Text = GetTestFilePath();
         }
-        
+
+        private string GetTestFilePath()
+        {
+            var currentLocation = Assembly.GetExecutingAssembly().Location;
+            return currentLocation.Substring(0, currentLocation.LastIndexOf('\\')) + "\\Testfile.txt";
+        }
+
         private void BtnStartPolling_OnClick(object sender, RoutedEventArgs e)
         {
             _viewModel.StartPolling(GetFilePath());
