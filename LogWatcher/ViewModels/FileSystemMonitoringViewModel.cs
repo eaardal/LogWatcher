@@ -7,11 +7,11 @@ namespace LogWatcher.ViewModels
 {
     class FileSystemMonitoringViewModel
     {
-        private readonly Dictionary<LogDisplayViewModel, string> _logDisplays;
+        private readonly Dictionary<FileLogDisplayViewModel, string> _logDisplays;
 
         public FileSystemMonitoringViewModel()
         {
-            _logDisplays = new Dictionary<LogDisplayViewModel, string>();
+            _logDisplays = new Dictionary<FileLogDisplayViewModel, string>();
             LogDisplayTabs = new ObservableCollection<TabItem>();
         }
 
@@ -23,10 +23,10 @@ namespace LogWatcher.ViewModels
             viewModel.StartPolling(filepath);
         }
 
-        private LogDisplayViewModel CreateNewLogDisplay(string filepath)
+        private FileLogDisplayViewModel CreateNewLogDisplay(string filepath)
         {
             var filename = GetFileName(filepath);
-            var logDisplayView = new LogDisplayView();
+            var logDisplayView = new FileLogDisplayView();
             _logDisplays.Add(logDisplayView.ViewModel, filepath);
             LogDisplayTabs.Add(new TabItem { Header = filename, Content = logDisplayView, IsSelected = true });
             return logDisplayView.ViewModel;

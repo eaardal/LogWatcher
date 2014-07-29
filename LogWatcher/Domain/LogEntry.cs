@@ -4,10 +4,15 @@ namespace LogWatcher.Domain
 {
     class LogEntry
     {
-        public DateTime Timestamp { get; private set; }
-        public string Severity { get; private set; }
-        public string Source { get; private set; }
-        public string Text { get; private set; }
+        public DateTime Timestamp { get; set; }
+        public string Severity { get; set; }
+        public string Source { get; set; }
+        public string Text { get; set; }
+
+        public LogEntry()
+        {
+            
+        }
 
         public LogEntry(DateTime timestamp, string source, string text) : this(timestamp, "None", source, text)
         {

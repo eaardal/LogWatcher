@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using LogWatcher.Domain;
 
 namespace LogWatcher.ViewModels
 {
-    class LogDisplayViewModel : ViewModel
+    class FileLogDisplayViewModel : ViewModel
     {
         private readonly FileLogService _fileLogService;
         private string _lastPollTime;
         private string _lastChangeTime;
 
-        public LogDisplayViewModel()
+        public FileLogDisplayViewModel()
         {
             _fileLogService = new FileLogService();
             _fileLogService.NewLogEntryCallback = OnLogEntryReceived;

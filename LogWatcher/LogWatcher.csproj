@@ -41,6 +41,10 @@
     <Reference Include="Nancy.Hosting.Self">
       <HintPath>..\packages\Nancy.Hosting.Self.0.23.2\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="ReachFramework" />
     <Reference Include="System" />
@@ -72,7 +76,6 @@
     <Compile Include="Domain\FilePoller.cs" />
     <Compile Include="Domain\FileReader.cs" />
     <Compile Include="Domain\HttpLogEntry.cs" />
-    <Compile Include="Domain\HttpLogService.cs" />
     <Compile Include="Domain\ILogEntryFormat.cs" />
     <Compile Include="Domain\ILogService.cs" />
     <Compile Include="Domain\LogEntry.cs" />
@@ -80,21 +83,27 @@
     <Compile Include="Domain\SeveritySourceTimestampTextFormat.cs" />
     <Compile Include="HttpInterface\LogWatcherHttpServer.cs" />
     <Compile Include="HttpInterface\ReceivalController.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="ReceivedHttpLogEntryMessage.cs" />
+    <Compile Include="NewHttpLogEntryMessage.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel.cs" />
     <Compile Include="ViewModels\FileSystemMonitoringViewModel.cs" />
+    <Compile Include="ViewModels\HttpLogDisplayViewModel.cs" />
     <Compile Include="ViewModels\HttpMonitoringViewModel.cs" />
-    <Compile Include="ViewModels\LogDisplayViewModel.cs" />
+    <Compile Include="ViewModels\FileLogDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\MonitoringViewModelBase.cs" />
     <Compile Include="Views\FileSystemMonitoringView.xaml.cs">
       <DependentUpon>FileSystemMonitoringView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HttpLogDisplayView.xaml.cs">
+      <DependentUpon>HttpLogDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HttpMonitoringView.xaml.cs">
       <DependentUpon>HttpMonitoringView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LogDisplayView.xaml.cs">
-      <DependentUpon>LogDisplayView.xaml</DependentUpon>
+    <Compile Include="Views\FileLogDisplayView.xaml.cs">
+      <DependentUpon>FileLogDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -107,11 +116,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HttpLogDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\HttpMonitoringView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LogDisplayView.xaml">
+    <Page Include="Views\FileLogDisplayView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
