@@ -1,0 +1,16 @@
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\bin\Debug\LogWatcher.exe.config
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\bin\Debug\LogWatcher.exe
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\bin\Debug\LogWatcher.pdb
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\LogWatcher.csprojResolveAssemblyReference.cache
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\App.g.cs
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\LogWatcher_MarkupCompile.cache
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\LogWatcher.g.resources
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\LogWatcher.Properties.Resources.resources
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\LogWatcher.csproj.GenerateResource.Cache
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\LogWatcher.exe
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\LogWatcher.pdb
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\LogWatcher_MarkupCompile.lref
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\Views\LogDisplayView.baml
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\Views\LogDisplayView.g.cs
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\Views\MainWindow.g.cs
+C:\Users\eiard\Documents\Visual Studio 2012\Projects\LogWatcher\LogWatcher\obj\Debug\Views\MainWindow.baml
