@@ -9,15 +9,15 @@ namespace LogWatcher.ViewModels
 {
     class LogDisplayViewModel : ViewModel
     {
-        private readonly LogService _logService;
+        private readonly FileLogService _fileLogService;
         private string _lastPollTime;
         private string _lastChangeTime;
 
         public LogDisplayViewModel()
         {
-            _logService = new LogService();
-            _logService.NewLogEntryCallback = OnLogEntryReceived;
-            _logService.FilePolledTickCallback = OnFilePolledTick;
+            _fileLogService = new FileLogService();
+            _fileLogService.NewLogEntryCallback = OnLogEntryReceived;
+            _fileLogService.FilePolledTickCallback = OnFilePolledTick;
 
             LogEntries = new ObservableCollection<object>();
         }
@@ -53,7 +53,7 @@ namespace LogWatcher.ViewModels
 
         public void StartPolling(string filepath)
         {
-            _logService.StartPolling(filepath);
+            _fileLogService.StartPolling(filepath);
         }
 
         private void OnLogEntryReceived(LogEntry logEntry)

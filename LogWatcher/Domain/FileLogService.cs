@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace LogWatcher.Domain
 {
-    class LogService
+    class FileLogService : ILogService
     {
         private FilePoller _filePoller;
         private readonly FileReader _fileReader;
 
-        public LogService()
+        public FileLogService()
         {
              _fileReader = new FileReader();
         }
