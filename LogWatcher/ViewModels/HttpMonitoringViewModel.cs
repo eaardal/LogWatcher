@@ -1,34 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
+using LogWatcher.Domain;
 using LogWatcher.Domain.Messages;
 using LogWatcher.HttpInterface;
 using LogWatcher.Infrastructure;
-using LogWatcher.Views;
 
 namespace LogWatcher.ViewModels
 {
-    class HttpMonitoringViewModel : ViewModel
+    class HttpMonitoringViewModel : MonitoringViewModelBase
     {
         private readonly string _serverIsRunningTemplate = String.Format("Server is running @ ");
         private readonly string _serverIsStoppedTemplate = String.Format("Server is currently not running");
         private string _serverUrlDisplayText;
-        private readonly Dictionary<string, HttpLogDisplayViewModel> _logDisplays;
 
         public HttpMonitoringViewModel()
         {
-            Message.Subscribe<ReceivedHttpLogEntryMessage>(OnReceivedHttpLogEntry);
-
             _serverUrlDisplayText = _serverIsRunningTemplate + Config.DefaultServerUrl; ;
-            _logDisplays = new Dictionary<string, HttpLogDisplayViewModel>();
-            LogDisplayTabs = new ObservableCollection<TabItem>();
 
-            var http = new LogWatcherHttpServer();
-            http.Connect(Config.DefaultServerUrl);
+            StartHttpServer();
+            
+            Message.Subscribe<ReceivedHttpLogEntryMessage<LogEntry>>(OnReceivedHttpLogEntry);
+            Message.Subscribe<ReceivedHttpLogEntryMessage<BasicLogEntry>>(OnReceivedHttpBasicLogEntry);
         }
-
-        public ObservableCollection<TabItem> LogDisplayTabs { get; private set; }
 
         public string ServerUrlDisplayText
         {
@@ -41,22 +33,38 @@ namespace LogWatcher.ViewModels
             }
         }
 
-        private HttpLogDisplayViewModel CreateNewLogDisplay(string identifier)
+        private void StartHttpServer()
         {
-            var logDisplayView = new HttpLogDisplayView();
-            var viewModel = logDisplayView.ViewModel;
-            viewModel.EntryIdentifier = identifier;
-            _logDisplays.Add(identifier, logDisplayView.ViewModel);
-            LogDisplayTabs.Add(new TabItem { Header = identifier, Content = logDisplayView, IsSelected = true });
-            return logDisplayView.ViewModel;
+            try
+            {
+                var http = new LogWatcherHttpServer();
+                http.Connect(Config.DefaultServerUrl);
+            }
+            catch (Exception)
+            {
+                _serverUrlDisplayText = _serverIsStoppedTemplate;
+            }
         }
 
-        private void OnReceivedHttpLogEntry(ReceivedHttpLogEntryMessage message)
+        private void OnReceivedHttpBasicLogEntry(ReceivedHttpLogEntryMessage<BasicLogEntry> message)
         {
-            if (!_logDisplays.ContainsKey(message.LogEntry.SourceIdentifier))
-                CreateNewLogDisplay(message.LogEntry.SourceIdentifier);
+            if (ShouldCreateNewLogDisplay(message.LogEntry))
+                CreateNewLogDisplay<BasicLogEntry>(message.LogEntry.SourceIdentifier);
 
-            Message.Publish(new NewLogEntryMessage {LogEntry = message.LogEntry});
+            Message.Publish(new NewLogEntryMessage<BasicLogEntry> { LogEntry = message.LogEntry });
+        }
+
+        private void OnReceivedHttpLogEntry(ReceivedHttpLogEntryMessage<LogEntry> message)
+        {
+            if (ShouldCreateNewLogDisplay(message.LogEntry))
+                CreateNewLogDisplay<LogEntry>(message.LogEntry.SourceIdentifier);
+
+            Message.Publish(new NewLogEntryMessage<LogEntry> {LogEntry = message.LogEntry});
+        }
+
+        private bool ShouldCreateNewLogDisplay(BasicLogEntry logEntry)
+        {
+            return !LogDisplays.Contains(logEntry.SourceIdentifier);
         }
     }
 }

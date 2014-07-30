@@ -72,10 +72,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Domain\BasicLogEntry.cs" />
     <Compile Include="Domain\BasicTextFormat.cs" />
     <Compile Include="Domain\FilePoller.cs" />
     <Compile Include="Domain\FileReader.cs" />
-    <Compile Include="Domain\ILogEntryFormat.cs" />
+    <Compile Include="Domain\Helpers\JsonHelpers.cs" />
+    <Compile Include="Domain\Helpers\LogEntryValidator.cs" />
+    <Compile Include="Domain\IBasicLogEntryFormat.cs" />
     <Compile Include="Domain\ILogService.cs" />
     <Compile Include="Domain\LogEntry.cs" />
     <Compile Include="Domain\FileLogService.cs" />
@@ -83,7 +86,6 @@
     <Compile Include="Domain\Messages\FilePollTickMessage.cs" />
     <Compile Include="Domain\Messages\NewLogEntryMessage.cs" />
     <Compile Include="Domain\Messages\ReceivedHttpLogEntryMessage.cs" />
-    <Compile Include="HttpInterface\LogEntryValidator.cs" />
     <Compile Include="HttpInterface\LogWatcherHttpServer.cs" />
     <Compile Include="HttpInterface\ReceivalController.cs" />
     <Compile Include="Infrastructure\Config.cs" />
@@ -91,16 +93,13 @@
     <Compile Include="Infrastructure\ViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\FileSystemMonitoringViewModel.cs" />
-    <Compile Include="ViewModels\HttpLogDisplayViewModel.cs" />
     <Compile Include="ViewModels\HttpMonitoringHelpViewModel.cs" />
     <Compile Include="ViewModels\HttpMonitoringViewModel.cs" />
-    <Compile Include="ViewModels\FileLogDisplayViewModel.cs" />
+    <Compile Include="ViewModels\LogDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\MonitoringViewModelBase.cs" />
     <Compile Include="Views\FileSystemMonitoringView.xaml.cs">
       <DependentUpon>FileSystemMonitoringView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HttpLogDisplayView.xaml.cs">
-      <DependentUpon>HttpLogDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HttpMonitoringHelpView.xaml.cs">
       <DependentUpon>HttpMonitoringHelpView.xaml</DependentUpon>
@@ -108,8 +107,8 @@
     <Compile Include="Views\HttpMonitoringView.xaml.cs">
       <DependentUpon>HttpMonitoringView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\FileLogDisplayView.xaml.cs">
-      <DependentUpon>FileLogDisplayView.xaml</DependentUpon>
+    <Compile Include="Views\LogDisplayView.xaml.cs">
+      <DependentUpon>LogDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -122,10 +121,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HttpLogDisplayView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\HttpMonitoringHelpView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -134,9 +129,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\FileLogDisplayView.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Views\LogDisplayView.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

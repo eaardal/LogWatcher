@@ -1,4 +1,4 @@
-﻿namespace LogWatcher.Domain
+namespace LogWatcher.Domain
 {
     internal interface ILogService
     {

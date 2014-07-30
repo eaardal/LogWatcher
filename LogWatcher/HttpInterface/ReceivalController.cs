@@ -1,5 +1,6 @@
 ﻿using System;
 using LogWatcher.Domain;
+using LogWatcher.Domain.Helpers;
 using LogWatcher.Domain.Messages;
 using LogWatcher.Infrastructure;
 using Nancy;
@@ -15,25 +16,28 @@ namespace LogWatcher.HttpInterface
         {
             Get["/"] = parameters => "This is the Log Watcher HTTP API. Send log messages by doing a POST to " + Config.DefaultServerUrl + " with a JSON object like this: \n" + LogEntry.GetAsJsonFormat();
 
-            Post["/"] = parameters =>
-            {
-                try
-                {
-                    var logEntry = this.Bind<LogEntry>(BindingConfig.Default);
+            Post["/"] = parameters => ProcessRequest<BasicLogEntry>();
 
-                    if (_validator.IsValid(logEntry))
-                    {
-                        Message.Publish(new ReceivedHttpLogEntryMessage {LogEntry = logEntry});
-                        
-                        return Response.AsText("Received log message with no validation errors").WithStatusCode(HttpStatusCode.OK);
-                    }
-                    return Response.AsText(GetBadRequestResponseText()).WithStatusCode(HttpStatusCode.BadRequest);
-                }
-                catch (Exception ex)
+            Post["/full"] = parameters => ProcessRequest<LogEntry>();
+        }
+
+        private Response ProcessRequest<TLogEntry>() where TLogEntry : BasicLogEntry
+        {
+            try
+            {
+                var logEntry = this.Bind<TLogEntry>(BindingConfig.Default);
+
+                if (_validator.IsValid(logEntry))
                 {
-                    return Response.AsText(GetBadRequestResponseText() + "\n\n The error message was: " + ex.Message).WithStatusCode(HttpStatusCode.BadRequest);
+                    Message.Publish(new ReceivedHttpLogEntryMessage<TLogEntry> { LogEntry = logEntry });
+                    return Response.AsText("Received log message with no validation errors").WithStatusCode(HttpStatusCode.OK);
                 }
-            };
+                return Response.AsText(GetBadRequestResponseText()).WithStatusCode(HttpStatusCode.BadRequest);
+            }
+            catch (Exception ex)
+            {
+                return Response.AsText(GetBadRequestResponseText() + "\n\n The error message was: " + ex.Message).WithStatusCode(HttpStatusCode.BadRequest);
+            }
         }
 
         private string GetBadRequestResponseText()

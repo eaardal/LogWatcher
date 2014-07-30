@@ -1,40 +1,58 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
-using LogWatcher.Views;
+﻿using System;
+using System.Reflection;
+using LogWatcher.Annotations;
+using LogWatcher.Domain;
+using LogWatcher.Domain.Messages;
+using LogWatcher.Infrastructure;
 
 namespace LogWatcher.ViewModels
 {
-    class FileSystemMonitoringViewModel
+    class FileSystemMonitoringViewModel : MonitoringViewModelBase
     {
-        private readonly Dictionary<string, FileLogDisplayViewModel> _logDisplays;
+        private readonly ILogService _logService;
+        private string _lastPollTime;
 
-        public FileSystemMonitoringViewModel()
+        public FileSystemMonitoringViewModel([NotNull] ILogService logService)
         {
-            _logDisplays = new Dictionary<string, FileLogDisplayViewModel>();
-            LogDisplayTabs = new ObservableCollection<TabItem>();
+            if (logService == null) throw new ArgumentNullException("logService");
+            _logService = logService;
+            
+            Message.Subscribe<FilePollTickMessage>(OnFilePollTick);
         }
 
-        public ObservableCollection<TabItem> LogDisplayTabs { get; private set; }
-
-        public void StartPolling(string filepath)
+        public string LastPollTime
         {
-            if (!_logDisplays.ContainsKey(filepath))
+            get { return _lastPollTime; }
+            private set
             {
-                var viewModel = CreateNewLogDisplay(filepath);
-                viewModel.StartPolling(filepath);    
+                if (value == _lastPollTime) return;
+                _lastPollTime = value;
+                NotifyPropertyChange();
             }
         }
 
-        private FileLogDisplayViewModel CreateNewLogDisplay(string filepath)
+        public string GetTestFilePath()
         {
-            var filename = GetFileName(filepath);
-            var logDisplayView = new FileLogDisplayView();
-            var vm = logDisplayView.ViewModel;
-            vm.EntryIdentifier = filepath;
-            _logDisplays.Add(filepath, vm);
-            LogDisplayTabs.Add(new TabItem { Header = filename, Content = logDisplayView, IsSelected = true });
-            return vm;
+            return GetExecutingPath() + "\\Testfile.txt";
+        }
+
+        public string GetExecutingPath()
+        {
+            var currentLocation = Assembly.GetExecutingAssembly().Location;
+            return currentLocation.Substring(0, currentLocation.LastIndexOf('\\'));
+        }
+
+        public void StartPolling(string filepath)
+        {
+            CreateNewLogDisplay<BasicLogEntry>(filepath, GetFileName(filepath));
+
+            if (_logService != null)
+                _logService.StartProcessing(filepath);
+        }
+
+        private void OnFilePollTick(FilePollTickMessage obj)
+        {
+            LastPollTime = DateTime.Now.ToLongTimeString();
         }
 
         private string GetFileName(string filepath)

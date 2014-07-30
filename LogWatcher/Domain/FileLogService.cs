@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Interop;
 using LogWatcher.Domain.Messages;
 using LogWatcher.Infrastructure;
 
@@ -16,14 +15,17 @@ namespace LogWatcher.Domain
         public FileLogService()
         {
             _fileReader = new FileReader();
-            
+
             Message.Subscribe<FileChangeDetectedMessage>(async msg => await OnFileChangeDetected(msg));
         }
 
         private async Task OnFileChangeDetected(FileChangeDetectedMessage message)
         {
             var newLines = await _fileReader.ReadChanges(message.File);
-            newLines.ToList().ForEach(line => Message.Publish(new NewLogEntryMessage { LogEntry = LogEntry.Parse(new BasicTextFormat(), message.File.Name, line) }));
+            newLines.ToList().ForEach(line => Message.Publish(new NewLogEntryMessage<BasicLogEntry>
+            {
+                LogEntry = BasicLogEntry.Parse(new BasicTextFormat(), message.File.FullName, line)
+            }));
         }
 
         public void StartProcessing(params string[] parameters)

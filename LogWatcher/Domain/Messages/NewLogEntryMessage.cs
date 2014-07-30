@@ -1,7 +1,7 @@
 ﻿namespace LogWatcher.Domain.Messages
 {
-    class NewLogEntryMessage
+    class NewLogEntryMessage<TLogEntry> where TLogEntry : BasicLogEntry
     {
-        public LogEntry LogEntry { get; set; }
+        public TLogEntry LogEntry { get; set; }
     }
 }

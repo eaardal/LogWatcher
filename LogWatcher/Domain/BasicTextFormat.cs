@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace LogWatcher.Domain
+﻿namespace LogWatcher.Domain
 {
-    internal class BasicTextFormat : ILogEntryFormat
+    internal class BasicTextFormat : IBasicLogEntryFormat
     {
-        public LogEntry Parse(string identifier, string text)
+        public BasicLogEntry Parse(string identifier, string text)
         {
-            return new LogEntry {Timestamp = DateTime.Now, Text = text, SourceIdentifier = identifier};
+            return new BasicLogEntry { Text = text, SourceIdentifier = identifier };
         }
     }
 }

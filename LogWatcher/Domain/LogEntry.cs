@@ -1,28 +1,20 @@
 ﻿using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using LogWatcher.Domain.Helpers;
 
 namespace LogWatcher.Domain
 {
-    class LogEntry
+    class LogEntry : BasicLogEntry
     {
-        public string SourceIdentifier { get; set; }
-        public DateTime Timestamp { get; set; }
         public string Severity { get; set; }
         public string Source { get; set; }
-        public string Text { get; set; }
-        
-        public static LogEntry Parse(ILogEntryFormat entryFormat, string identifier, string text)
-        {
-            return entryFormat.Parse(identifier, text);
-        }
+        public DateTime Timestamp { get; set; }
 
         public override string ToString()
         {
             return String.Format("{0} {1} {2}\t\t{3}", Severity, Timestamp, Source, Text);
         }
 
-        public static string GetAsJsonFormat()
+        public new static string GetAsJsonFormat()
         {
             var logEntry = new LogEntry
             {
@@ -32,8 +24,8 @@ namespace LogWatcher.Domain
                 Text = "The actual log message text",
                 Timestamp = DateTime.Now
             };
-                               
-            return JsonConvert.SerializeObject(logEntry, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+
+            return JsonHelpers.ConvertToPrettifiedJson(logEntry);
         }
     }
 }

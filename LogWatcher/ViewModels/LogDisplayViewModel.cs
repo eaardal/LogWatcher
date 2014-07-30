@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Windows;
 using LogWatcher.Domain;
 using LogWatcher.Domain.Messages;
 using LogWatcher.Infrastructure;
+using Application = System.Windows.Application;
+using Message = LogWatcher.Infrastructure.Message;
 
 namespace LogWatcher.ViewModels
 {
-    class HttpLogDisplayViewModel : ViewModel
+    class LogDisplayViewModel<TLogEntry> : ViewModel where TLogEntry : BasicLogEntry
     {
         private string _lastChangeTime;
-        public string EntryIdentifier { get; set; }
-
-        public HttpLogDisplayViewModel()
+        
+        public LogDisplayViewModel()
         {
-            Message.Subscribe<NewLogEntryMessage>(OnNewLogEntry);
-            
-            LogEntries = new ObservableCollection<LogEntry>();
+            Message.Subscribe<NewLogEntryMessage<TLogEntry>>(OnNewLogEntry);
+
+            LogEntries = new ObservableCollection<TLogEntry>();
         }
 
-        public ObservableCollection<LogEntry> LogEntries { get; private set; }
+        public ObservableCollection<TLogEntry> LogEntries { get; private set; }
+        public string EntryIdentifier { get; set; }
 
         public string LastChangeTime
         {
@@ -32,16 +33,16 @@ namespace LogWatcher.ViewModels
             }
         }
 
-        private void OnNewLogEntry(NewLogEntryMessage message)
+        protected virtual void OnNewLogEntry(NewLogEntryMessage<TLogEntry> message)
         {
             if (!String.IsNullOrEmpty(EntryIdentifier) && message.LogEntry.SourceIdentifier == EntryIdentifier)
             {
                 LastChangeTime = DateTime.Now.ToLongTimeString();
-                AddToLogOutput(message.LogEntry);   
+                AddToLogOutput(message.LogEntry);
             }
         }
 
-        private void AddToLogOutput(LogEntry entry)
+        private void AddToLogOutput(TLogEntry entry)
         {
             Application.Current.Dispatcher.Invoke((() => LogEntries.Insert(0, entry)));
         }

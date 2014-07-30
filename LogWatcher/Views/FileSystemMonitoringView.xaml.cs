@@ -1,6 +1,6 @@
-﻿using System.Reflection;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Forms;
+using LogWatcher.Domain;
 using LogWatcher.ViewModels;
 
 namespace LogWatcher.Views
@@ -11,16 +11,10 @@ namespace LogWatcher.Views
 
         public FileSystemMonitoringView()
         {
-            _viewModel = new FileSystemMonitoringViewModel();
+            _viewModel = new FileSystemMonitoringViewModel(new FileLogService());
             InitializeComponent();
             DataContext = _viewModel;
-            TxtFilePath.Text = GetTestFilePath();
-        }
-
-        private string GetTestFilePath()
-        {
-            var currentLocation = Assembly.GetExecutingAssembly().Location;
-            return currentLocation.Substring(0, currentLocation.LastIndexOf('\\')) + "\\Testfile.txt";
+            TxtFilePath.Text = _viewModel.GetTestFilePath();
         }
 
         private void BtnStartPolling_OnClick(object sender, RoutedEventArgs e)
@@ -35,11 +29,14 @@ namespace LogWatcher.Views
 
         private void BtnBrowse_OnClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new OpenFileDialog();
-            dialog.Multiselect = false;
+            var dialog = new OpenFileDialog
+            {
+                Multiselect = false,
+                InitialDirectory = _viewModel.GetExecutingPath()
+            };
 
             var result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 TxtFilePath.Text = dialog.FileName;
             }
