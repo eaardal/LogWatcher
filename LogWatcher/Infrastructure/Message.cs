@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Windows;
 
-namespace LogWatcher
+namespace LogWatcher.Infrastructure
 {
     public delegate void MessageSentDemoEventHandler<in TMessage>(TMessage e);
 
@@ -38,7 +39,8 @@ namespace LogWatcher
             public static void Publish(TMessage message)
             {
                 if (MessageSent != null)
-                    MessageSent(message);
+                    Application.Current.Dispatcher.Invoke((() => MessageSent(message)));
+                    
             }
         }
     }

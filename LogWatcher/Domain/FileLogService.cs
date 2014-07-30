@@ -2,6 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Interop;
+using LogWatcher.Domain.Messages;
+using LogWatcher.Infrastructure;
 
 namespace LogWatcher.Domain
 {
@@ -12,39 +15,34 @@ namespace LogWatcher.Domain
 
         public FileLogService()
         {
-             _fileReader = new FileReader();
+            _fileReader = new FileReader();
+            
+            Message.Subscribe<FileChangeDetectedMessage>(async msg => await OnFileChangeDetected(msg));
         }
 
-        public Action<LogEntry> NewLogEntryCallback { get; set; }
-        public Action<FileInfo> FilePolledTickCallback { get; set; }
-        
-        public void StartPolling(string filepath)
+        private async Task OnFileChangeDetected(FileChangeDetectedMessage message)
         {
-            var file = new FileInfo(filepath);
+            var newLines = await _fileReader.ReadChanges(message.File);
+            newLines.ToList().ForEach(line => Message.Publish(new NewLogEntryMessage { LogEntry = LogEntry.Parse(new BasicTextFormat(), message.File.Name, line) }));
+        }
+
+        public void StartProcessing(params string[] parameters)
+        {
+            if (!VerifyHasRequiredParameters(parameters)) return;
+
+            var filePath = parameters[0];
+            var file = new FileInfo(filePath);
             if (file.Exists)
             {
                 _filePoller = new FilePoller(file);
-                _filePoller.FileHasChanges += async (source, f) => await FilePollerOnFileHasChanges(source, f);
-                _filePoller.FilePollTick += FilePollerOnFilePollTick;
                 _filePoller.Start();
             }
         }
 
-        private void FilePollerOnFilePollTick(FilePoller source, FileInfo file)
+        private bool VerifyHasRequiredParameters(string[] parameters)
         {
-            if (FilePolledTickCallback != null)
-                FilePolledTickCallback(file);
-        }
-
-        private async Task FilePollerOnFileHasChanges(FilePoller source, FileInfo file)
-        {
-            var changes = await _fileReader.ReadChanges(file);
-            var newLines = changes.ToList();
-
-            if (newLines.Any() && NewLogEntryCallback != null)
-            {
-                newLines.ForEach(line => NewLogEntryCallback(new LogEntry(DateTime.Now, file.Name, line)));
-            }
+            var filepath = parameters[0];
+            return !String.IsNullOrEmpty(filepath) && File.Exists(filepath);
         }
     }
 }

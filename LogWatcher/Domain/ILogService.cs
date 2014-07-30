@@ -1,10 +1,7 @@
-﻿using System;
-using System.IO;
-
-namespace LogWatcher.Domain
+﻿namespace LogWatcher.Domain
 {
     internal interface ILogService
     {
-        Action<LogEntry> NewLogEntryCallback { get; set; }
+        void StartProcessing(params string[] parameters);
     }
 }

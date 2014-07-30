@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using LogWatcher.Domain.Messages;
 using LogWatcher.HttpInterface;
+using LogWatcher.Infrastructure;
 using LogWatcher.Views;
 
 namespace LogWatcher.ViewModels
@@ -51,10 +53,10 @@ namespace LogWatcher.ViewModels
 
         private void OnReceivedHttpLogEntry(ReceivedHttpLogEntryMessage message)
         {
-            if (!_logDisplays.ContainsKey(message.HttpLogEntry.SourceApplication))
-                CreateNewLogDisplay(message.HttpLogEntry.SourceApplication);
+            if (!_logDisplays.ContainsKey(message.LogEntry.SourceIdentifier))
+                CreateNewLogDisplay(message.LogEntry.SourceIdentifier);
 
-            Message.Publish(new NewHttpLogEntryMessage {HttpLogEntry = message.HttpLogEntry});
+            Message.Publish(new NewLogEntryMessage {LogEntry = message.LogEntry});
         }
     }
 }

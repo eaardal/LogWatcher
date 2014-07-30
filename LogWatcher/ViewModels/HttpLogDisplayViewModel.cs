@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using LogWatcher.Domain;
+using LogWatcher.Domain.Messages;
+using LogWatcher.Infrastructure;
 
 namespace LogWatcher.ViewModels
 {
@@ -11,12 +14,12 @@ namespace LogWatcher.ViewModels
 
         public HttpLogDisplayViewModel()
         {
-            Message.Subscribe<NewHttpLogEntryMessage>(OnNewHttpLogEntry);
+            Message.Subscribe<NewLogEntryMessage>(OnNewLogEntry);
             
-            LogEntries = new ObservableCollection<object>();
+            LogEntries = new ObservableCollection<LogEntry>();
         }
 
-        public ObservableCollection<object> LogEntries { get; private set; }
+        public ObservableCollection<LogEntry> LogEntries { get; private set; }
 
         public string LastChangeTime
         {
@@ -29,16 +32,16 @@ namespace LogWatcher.ViewModels
             }
         }
 
-        private void OnNewHttpLogEntry(NewHttpLogEntryMessage logEntry)
+        private void OnNewLogEntry(NewLogEntryMessage message)
         {
-            if (!String.IsNullOrEmpty(EntryIdentifier) && logEntry.HttpLogEntry.SourceApplication == EntryIdentifier)
+            if (!String.IsNullOrEmpty(EntryIdentifier) && message.LogEntry.SourceIdentifier == EntryIdentifier)
             {
                 LastChangeTime = DateTime.Now.ToLongTimeString();
-                AddToLogOutput(logEntry.ToString());   
+                AddToLogOutput(message.LogEntry);   
             }
         }
 
-        private void AddToLogOutput(string entry)
+        private void AddToLogOutput(LogEntry entry)
         {
             Application.Current.Dispatcher.Invoke((() => LogEntries.Insert(0, entry)));
         }

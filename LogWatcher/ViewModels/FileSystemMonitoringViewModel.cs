@@ -7,11 +7,11 @@ namespace LogWatcher.ViewModels
 {
     class FileSystemMonitoringViewModel
     {
-        private readonly Dictionary<FileLogDisplayViewModel, string> _logDisplays;
+        private readonly Dictionary<string, FileLogDisplayViewModel> _logDisplays;
 
         public FileSystemMonitoringViewModel()
         {
-            _logDisplays = new Dictionary<FileLogDisplayViewModel, string>();
+            _logDisplays = new Dictionary<string, FileLogDisplayViewModel>();
             LogDisplayTabs = new ObservableCollection<TabItem>();
         }
 
@@ -19,17 +19,22 @@ namespace LogWatcher.ViewModels
 
         public void StartPolling(string filepath)
         {
-            var viewModel = CreateNewLogDisplay(filepath);
-            viewModel.StartPolling(filepath);
+            if (!_logDisplays.ContainsKey(filepath))
+            {
+                var viewModel = CreateNewLogDisplay(filepath);
+                viewModel.StartPolling(filepath);    
+            }
         }
 
         private FileLogDisplayViewModel CreateNewLogDisplay(string filepath)
         {
             var filename = GetFileName(filepath);
             var logDisplayView = new FileLogDisplayView();
-            _logDisplays.Add(logDisplayView.ViewModel, filepath);
+            var vm = logDisplayView.ViewModel;
+            vm.EntryIdentifier = filepath;
+            _logDisplays.Add(filepath, vm);
             LogDisplayTabs.Add(new TabItem { Header = filename, Content = logDisplayView, IsSelected = true });
-            return logDisplayView.ViewModel;
+            return vm;
         }
 
         private string GetFileName(string filepath)

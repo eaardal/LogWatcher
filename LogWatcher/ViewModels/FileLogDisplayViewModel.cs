@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using LogWatcher.Domain;
+using LogWatcher.Domain.Messages;
+using LogWatcher.Infrastructure;
 
 namespace LogWatcher.ViewModels
 {
@@ -15,18 +16,15 @@ namespace LogWatcher.ViewModels
         public FileLogDisplayViewModel()
         {
             _fileLogService = new FileLogService();
-            _fileLogService.NewLogEntryCallback = OnLogEntryReceived;
-            _fileLogService.FilePolledTickCallback = OnFilePolledTick;
+            LogEntries = new ObservableCollection<LogEntry>();
 
-            LogEntries = new ObservableCollection<object>();
+            Message.Subscribe<FilePollTickMessage>(OnFilePollTick);
+            Message.Subscribe<NewLogEntryMessage>(OnNewLogEntry);
         }
 
-        private void OnFilePolledTick(FileInfo obj)
-        {
-            LastPollTime = DateTime.Now.ToLongTimeString();
-        }
+        public ObservableCollection<LogEntry> LogEntries { get; private set; }
 
-        public ObservableCollection<object> LogEntries { get; private set; }
+        public string EntryIdentifier { get; set; }
 
         public string LastPollTime
         {
@@ -52,16 +50,24 @@ namespace LogWatcher.ViewModels
 
         public void StartPolling(string filepath)
         {
-            _fileLogService.StartPolling(filepath);
+            _fileLogService.StartProcessing(filepath);
         }
 
-        private void OnLogEntryReceived(LogEntry logEntry)
+        private void OnNewLogEntry(NewLogEntryMessage message)
         {
-            LastChangeTime = DateTime.Now.ToLongTimeString();
-            AddToLogOutput(logEntry.ToString());
+            if (EntryIdentifier == message.LogEntry.SourceIdentifier)
+            {
+                LastChangeTime = DateTime.Now.ToLongTimeString();
+                AddToLogOutput(message.LogEntry);    
+            }
         }
 
-        private void AddToLogOutput(string entry)
+        private void OnFilePollTick(FilePollTickMessage obj)
+        {
+            LastPollTime = DateTime.Now.ToLongTimeString();
+        }
+        
+        private void AddToLogOutput(LogEntry entry)
         {
             Application.Current.Dispatcher.Invoke((() => LogEntries.Insert(0, entry)));
         }

@@ -1,0 +1,34 @@
+﻿<Window x:Class="LogWatcher.Views.HttpMonitoringHelpView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="700" Width="700" Height="400">
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Margin="20">
+            <TextBlock Text="Log Watcher HTTP API" TextAlignment="Center" FontSize="18" Margin="0,0,0,20" />
+            <WrapPanel>
+                <TextBlock TextWrapping="Wrap" Text="- Test connectivity by doing a GET to "/>
+                <TextBlock TextWrapping="Wrap" Text="{Binding Path=ServerUrl}" FontFamily="Consolas" FontSize="14" Background="Beige"/>
+            </WrapPanel>
+            <WrapPanel>
+                <TextBlock TextWrapping="Wrap" Text="- Send log messages to Log Watcher by doing a POST to "/>
+                <TextBlock TextWrapping="Wrap" Text="{Binding Path=ServerUrl}" FontFamily="Consolas" FontSize="14" Background="Beige"/>
+            </WrapPanel>
+            <TextBlock TextWrapping="Wrap" Text="- Accepts only JSON in the following format:"/>
+            <TextBlock TextWrapping="Wrap" Text="{Binding Path=HttpLogEntryJson}" Margin="20,0,0,0" FontFamily="Consolas" FontSize="14" Background="Beige" />
+            <TextBlock TextWrapping="Wrap" Text="- All fields are required. All fields are strings except Timestamp which is DateTime."/>
+            <TextBlock TextWrapping="Wrap" Text="- Log entries are grouped by the Source Identifier value. All messages from the same source identity are shown in the same tab. Log entries which does not match any existing source identity will create a new tab."/>
+            <TextBlock TextWrapping="Wrap" Text="- You can change the server url in LogWatcher.exe.config which should be located in the same directory as LogWatcher.exe"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button Content="Copy JSON to clipboard" Name="BtnCopyJson" Click="BtnCopyJson_OnClick" Margin="20,0,0,10" />
+            <Button Content="Copy server URL to clipboard" Name="BtnCopyServerUrl" Click="BtnCopyServerUrl_OnClick" Margin="20,0,0,10" />
+        </StackPanel>
+    </Grid>
+</Window>

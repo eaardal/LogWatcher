@@ -2,6 +2,6 @@
 {
     internal interface ILogEntryFormat
     {
-        LogEntry Parse(string text);
+        LogEntry Parse(string identifier, string text);
     }
 }

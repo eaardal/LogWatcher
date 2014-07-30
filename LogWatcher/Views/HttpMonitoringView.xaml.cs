@@ -5,13 +5,16 @@ namespace LogWatcher.Views
 {
     public partial class HttpMonitoringView
     {
-        private readonly HttpMonitoringViewModel _viewModel;
-
         public HttpMonitoringView()
         {
-            _viewModel = new HttpMonitoringViewModel();
             InitializeComponent();
-            DataContext = _viewModel;
+            DataContext = new HttpMonitoringViewModel();
+        }
+
+        private void BtnOpenHelp_OnClick(object sender, RoutedEventArgs e)
+        {
+            var view = new HttpMonitoringHelpView();
+            view.Show();
         }
     }
 }

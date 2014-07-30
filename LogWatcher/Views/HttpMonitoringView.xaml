@@ -5,15 +5,45 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600">
+    <UserControl.Resources>
+        <Style
+    x:Key="LinkButton"
+    TargetType="Button">
+            <Setter
+        Property="Template">
+                <Setter.Value>
+                    <ControlTemplate
+                TargetType="Button">
+                        <TextBlock
+                    TextDecorations="Underline">
+                <ContentPresenter /></TextBlock>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter
+        Property="Foreground"
+        Value="Blue" />
+            <Style.Triggers>
+                <Trigger
+            Property="IsMouseOver"
+            Value="true">
+                    <Setter
+                Property="Foreground"
+                Value="Red" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         
-        <GroupBox Grid.Row="0" Header="Http server configuration">
+        <GroupBox Grid.Row="0" Header="Http server status">
             <DockPanel Margin="10">
-                <TextBlock Text="{Binding Path=ServerUrlDisplayText}" Margin="0,0,10,0" HorizontalAlignment="Stretch" />
+                <TextBlock Text="{Binding Path=ServerUrlDisplayText}" Margin="0,0,5,0" HorizontalAlignment="Stretch" />
+                <Button Name="BtnOpenHelp" Click="BtnOpenHelp_OnClick" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Content="More info" />
             </DockPanel>
         </GroupBox>
 

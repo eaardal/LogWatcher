@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace LogWatcher
+namespace LogWatcher.Infrastructure
 {
     static class Config
     {

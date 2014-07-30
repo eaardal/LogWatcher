@@ -2,21 +2,17 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Timers;
+using LogWatcher.Domain.Messages;
+using LogWatcher.Infrastructure;
 
 namespace LogWatcher.Domain
 {
-    internal delegate void FilePollTick(FilePoller source, FileInfo file);
-    internal delegate void FileHasChanges(FilePoller source, FileInfo file);
-
     class FilePoller
     {
         private readonly FileInfo _fileToWatch;
         private readonly int _pollInterval;
         private Timer _pollTimer;
         private string _lastFileHash;
-
-        public event FilePollTick FilePollTick;
-        public event FileHasChanges FileHasChanges;
 
         public FilePoller(FileInfo fileToWatch, int pollInterval = 1000)
         {
@@ -42,11 +38,8 @@ namespace LogWatcher.Domain
         {
             _pollTimer.Enabled = false;
 
-            if (FilePollTick != null)
-            {
-                FilePollTick(this, _fileToWatch);
-            }
-
+            Message.Publish(new FilePollTickMessage{ File = _fileToWatch, Sender = this });
+            
             using (var md5 = MD5.Create())
             {
                 using (var stream = File.OpenRead(_fileToWatch.FullName))
@@ -55,21 +48,13 @@ namespace LogWatcher.Domain
 
                     if (hash != _lastFileHash)
                     {
-                        NotifyOfFileChange();
+                        Message.Publish(new FileChangeDetectedMessage { File = _fileToWatch,  Sender = this });
                         UpdateLastFileHash(hash);
                     }
                 }
             }
 
             _pollTimer.Enabled = true;
-        }
-
-        private void NotifyOfFileChange()
-        {
-            if (FileHasChanges != null)
-            {
-                FileHasChanges(this, _fileToWatch);
-            }
         }
 
         private void UpdateLastFileHash(string hash)
