@@ -18,9 +18,14 @@ namespace LogWatcher.ViewModels
         protected List<string> LogDisplays { get; private set; }
         public ObservableCollection<TabItem> LogDisplayTabs { get; private set; }
 
+        protected bool ShouldCreateNewLogDisplay(string identifier)
+        {
+            return !LogDisplays.Contains(identifier);
+        }
+
         protected void CreateNewLogDisplay<TLogEntry>(string identifier, string displayTitle) where TLogEntry : BasicLogEntry
         {
-            if (!LogDisplays.Contains(identifier))
+            if (ShouldCreateNewLogDisplay(identifier))
             {
                 var viewModel = new LogDisplayViewModel<TLogEntry> {EntryIdentifier = identifier};
                 var view = new LogDisplayView();

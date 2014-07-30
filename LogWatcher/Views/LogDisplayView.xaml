@@ -11,7 +11,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <ListBox Grid.Row="0" ItemsSource="{Binding Path=LogEntries}"/>
+        <ListBox Grid.Row="0" FontFamily="Consolas" FontSize="12" ItemsSource="{Binding Path=LogEntries}"/>
         
     </Grid>
 </UserControl>

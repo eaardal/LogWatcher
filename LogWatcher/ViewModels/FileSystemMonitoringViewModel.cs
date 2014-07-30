@@ -44,10 +44,13 @@ namespace LogWatcher.ViewModels
 
         public void StartPolling(string filepath)
         {
-            CreateNewLogDisplay<BasicLogEntry>(filepath, GetFileName(filepath));
+            if (ShouldCreateNewLogDisplay(filepath))
+            {
+                CreateNewLogDisplay<BasicLogEntry>(filepath, GetFileName(filepath));
 
-            if (_logService != null)
-                _logService.StartProcessing(filepath);
+                if (_logService != null)
+                    _logService.StartProcessing(filepath);   
+            }
         }
 
         private void OnFilePollTick(FilePollTickMessage obj)
@@ -57,7 +60,7 @@ namespace LogWatcher.ViewModels
 
         private string GetFileName(string filepath)
         {
-            var lastIndex = filepath.LastIndexOf("\\", System.StringComparison.Ordinal);
+            var lastIndex = filepath.LastIndexOf("\\", StringComparison.Ordinal);
             var startindex = lastIndex + 1;
             var length = filepath.Length;
             return filepath.Substring(startindex, length - startindex);

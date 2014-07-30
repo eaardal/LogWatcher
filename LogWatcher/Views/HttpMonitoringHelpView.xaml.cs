@@ -14,14 +14,29 @@ namespace LogWatcher.Views
             DataContext = _viewModel;
         }
 
-        private void BtnCopyJson_OnClick(object sender, RoutedEventArgs e)
-        {
-            Clipboard.SetText(_viewModel.HttpLogEntryJson);
-        }
-
-        private void BtnCopyServerUrl_OnClick(object sender, RoutedEventArgs e)
+        private void CopyGetUrlToClipboard(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(_viewModel.ServerUrl);
+        }
+
+        private void CopyPostDefaultJsonToClipboard(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(_viewModel.BasicLogEntryJson);
+        }
+
+        private void CopyPostDefaultUrlToClipboard(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(_viewModel.ServerUrl);
+        }
+
+        private void CopyPostFullUrlToClipboard(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(_viewModel.ServerUrl + "full");
+        }
+
+        private void CopyPostFullJsonToClipboard(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(_viewModel.LogEntryJson);
         }
     }
 }

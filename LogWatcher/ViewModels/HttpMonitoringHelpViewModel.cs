@@ -6,12 +6,14 @@ namespace LogWatcher.ViewModels
     class HttpMonitoringHelpViewModel : ViewModel
     {
         private string _serverUrl;
-        private string _httpLogEntryJson;
+        private string _logEntryJson;
+        private string _basicLogEntryJson;
 
         public HttpMonitoringHelpViewModel()
         {
             _serverUrl = Config.DefaultServerUrl;
-            _httpLogEntryJson = LogEntry.GetAsJsonFormat();
+            _logEntryJson = LogEntry.GetAsJsonFormat();
+            _basicLogEntryJson = BasicLogEntry.GetAsJsonFormat();
         }
 
         public string ServerUrl
@@ -25,13 +27,24 @@ namespace LogWatcher.ViewModels
             }
         }
 
-        public string HttpLogEntryJson
+        public string BasicLogEntryJson
         {
-            get { return _httpLogEntryJson; }
+            get { return _basicLogEntryJson; }
             set
             {
-                if (value == _httpLogEntryJson) return;
-                _httpLogEntryJson = value;
+                if (value == _basicLogEntryJson) return;
+                _basicLogEntryJson = value;
+                NotifyPropertyChange();
+            }
+        }
+
+        public string LogEntryJson
+        {
+            get { return _logEntryJson; }
+            set
+            {
+                if (value == _logEntryJson) return;
+                _logEntryJson = value;
                 NotifyPropertyChange();
             }
         }
