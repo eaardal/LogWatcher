@@ -88,8 +88,10 @@
     <Compile Include="Domain\LogEntry.cs" />
     <Compile Include="Domain\FileLogService.cs" />
     <Compile Include="Domain\Messages\FileChangeDetectedMessage.cs" />
+    <Compile Include="Domain\Messages\FileNotFoundMessage.cs" />
     <Compile Include="Domain\Messages\FilePollTickMessage.cs" />
     <Compile Include="Domain\Messages\NewLogEntryMessage.cs" />
+    <Compile Include="Domain\Messages\PollIntervalNotValidMessage.cs" />
     <Compile Include="Domain\Messages\ReceivedHttpLogEntryMessage.cs" />
     <Compile Include="HttpInterface\LogWatcherHttpServer.cs" />
     <Compile Include="HttpInterface\ReceivalController.cs" />

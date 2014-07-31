@@ -39,10 +39,12 @@ namespace LogWatcher.Domain
             if (!VerifyHasRequiredParameters(parameters)) return;
 
             var filePath = parameters[0];
+            var pollInterval = Convert.ToInt32(parameters[1]);
+
             var file = new FileInfo(filePath);
             if (file.Exists)
             {
-                _filePoller = new FilePoller(file);
+                _filePoller = new FilePoller(file, pollInterval);
                 _filePoller.Start();
             }
         }
@@ -50,14 +52,21 @@ namespace LogWatcher.Domain
         private bool VerifyHasRequiredParameters(string[] parameters)
         {
             var filepath = parameters[0];
+            var pollInterval = parameters[1];
+
             var isValid = !String.IsNullOrEmpty(filepath) && File.Exists(filepath);
-            if (isValid)
+            if (!isValid)
             {
-                return true;
+                Message.Publish(new FileNotFoundMessage { File = new FileInfo(filepath) });
             }
 
-            Message.Publish(new FileNotFoundMessage { File = new FileInfo(filepath) });
-            return false;
+            int result;
+            isValid = !String.IsNullOrEmpty(pollInterval) && Int32.TryParse(pollInterval, out result) && result > 500;
+            
+            if (!isValid)
+                Message.Publish(new PollIntervalNotValidMessage { PollInterval = pollInterval, Sender = this});
+
+            return isValid;
         }
     }
 }

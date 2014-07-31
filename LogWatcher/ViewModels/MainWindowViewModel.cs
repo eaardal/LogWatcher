@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using LogWatcher.Domain;
+using LogWatcher.Domain.Messages;
 using LogWatcher.Infrastructure;
 
 namespace LogWatcher.ViewModels

@@ -4,17 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="500" d:DesignWidth="1000">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Button Grid.Row="0" Click="BtnBrowse_OnClick" Name="BtnBrowse" Content="Browse..." HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBox Grid.Row="0" Name="TxtFilePath" HorizontalAlignment="Left" Height="23" Margin="90,9,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="737"/>
-        <Button Grid.Row="0" Click="BtnStartPolling_OnClick" Name="BtnStartPolling" Content="Start polling" HorizontalAlignment="Left" Margin="832,10,0,0" VerticalAlignment="Top" Width="75"/>
-
+        <Grid Grid.Row="0" Margin="10,10,10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Click="BtnBrowse_OnClick" Content="Browse..." HorizontalAlignment="Left" Width="75" Margin="0,0,10,0"/>
+            <TextBox Grid.Column="1" Text="{Binding Path=FilePath}" HorizontalAlignment="Stretch" MinWidth="700" Margin="0,0,10,0"/>
+            <TextBox Grid.Column="2" Text="{Binding Path=Interval}" HorizontalAlignment="Left" Width="50" Margin="0,0,10,0"/>
+            <Button Grid.Column="3" Click="BtnStartPolling_OnClick" Content="Start polling" HorizontalAlignment="Right" Width="75"/>
+        </Grid>
+        
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>

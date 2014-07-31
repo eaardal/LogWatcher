@@ -8,9 +8,11 @@ namespace LogWatcher.Infrastructure
         static Config()
         {
             DefaultServerUrl = GetConfigValue<string>("HttpServer.DefaultUrl");
+            DefaultPollInterval = GetConfigValue<int>("DefaultPollInterval");
         }
 
         public static string DefaultServerUrl { get; private set; }
+        public static int DefaultPollInterval { get; private set; }
 
         private static T GetConfigValue<T>(string key)
         {

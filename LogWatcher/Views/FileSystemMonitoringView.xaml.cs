@@ -14,33 +14,16 @@ namespace LogWatcher.Views
             _viewModel = new FileSystemMonitoringViewModel(new FileLogService());
             InitializeComponent();
             DataContext = _viewModel;
-            TxtFilePath.Text = _viewModel.GetTestFilePath();
         }
 
         private void BtnStartPolling_OnClick(object sender, RoutedEventArgs e)
         {
-            _viewModel.StartPolling(GetFilePath());
-        }
-
-        private string GetFilePath()
-        {
-            return TxtFilePath.Text;
+            _viewModel.StartPolling();
         }
 
         private void BtnBrowse_OnClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new OpenFileDialog
-            {
-                Multiselect = false,
-                InitialDirectory = _viewModel.GetExecutingPath()
-            };
-
-            var result = dialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                TxtFilePath.Text = dialog.FileName;
-                _viewModel.StartPolling(GetFilePath());
-            }
+            _viewModel.OpenFileDialog();
         }
     }
 }
