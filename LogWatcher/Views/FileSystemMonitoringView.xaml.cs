@@ -39,6 +39,7 @@ namespace LogWatcher.Views
             if (result == DialogResult.OK)
             {
                 TxtFilePath.Text = dialog.FileName;
+                _viewModel.StartPolling(GetFilePath());
             }
         }
     }

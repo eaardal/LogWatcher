@@ -14,7 +14,7 @@ namespace LogWatcher.HttpInterface
 
         public ReceivalController()
         {
-            Get["/"] = parameters => "This is the Log Watcher HTTP API. Send log messages by doing a POST to " + Config.DefaultServerUrl + " with a JSON object like this: \n" + LogEntry.GetAsJsonFormat();
+            Get["/"] = parameters => "This is the Log Watcher HTTP API.";
 
             Post["/"] = parameters => ProcessRequest<BasicLogEntry>();
 

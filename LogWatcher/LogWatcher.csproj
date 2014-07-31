@@ -72,6 +72,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CustomControls\CloseableTabItem.cs" />
+    <Compile Include="CustomControls\Messages\TabItemClosedMessage.cs" />
+    <Compile Include="CustomControls\TabCloseButtonView.xaml.cs">
+      <DependentUpon>TabCloseButtonView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Domain\BasicLogEntry.cs" />
     <Compile Include="Domain\BasicTextFormat.cs" />
     <Compile Include="Domain\FilePoller.cs" />
@@ -117,6 +122,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="CustomControls\TabCloseButtonView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\FileSystemMonitoringView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

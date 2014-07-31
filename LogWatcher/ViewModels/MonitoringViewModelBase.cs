@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using LogWatcher.CustomControls;
+using LogWatcher.CustomControls.Messages;
 using LogWatcher.Domain;
 using LogWatcher.Infrastructure;
 using LogWatcher.Views;
@@ -13,6 +15,15 @@ namespace LogWatcher.ViewModels
         {
             LogDisplays = new List<string>();
             LogDisplayTabs = new ObservableCollection<TabItem>();
+
+            Message.Subscribe<TabItemClosedMessage>(OnTabItemClosed);
+        }
+
+        private void OnTabItemClosed(TabItemClosedMessage message)
+        {
+            var identifier = message.TabItem.Tag.ToString();
+            LogDisplays.Remove(identifier);
+            LogDisplayTabs.Remove(message.TabItem);
         }
 
         protected List<string> LogDisplays { get; private set; }
@@ -31,12 +42,15 @@ namespace LogWatcher.ViewModels
                 var view = new LogDisplayView();
                 view.SetViewModel(viewModel);
                 
-                LogDisplayTabs.Add(new TabItem
+                var tabItem = new CloseableTabItem
                 {
-                    Header = displayTitle,
                     Content = view,
-                    IsSelected = true
-                });
+                    IsSelected = true,
+                    Tag = identifier
+                };
+
+                tabItem.SetHeader(new TextBlock {Text = displayTitle});
+                LogDisplayTabs.Add(tabItem);
 
                 LogDisplays.Add(identifier);
             }

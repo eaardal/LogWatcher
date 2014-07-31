@@ -15,6 +15,19 @@
         <TextBox Grid.Row="0" Name="TxtFilePath" HorizontalAlignment="Left" Height="23" Margin="90,9,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="737"/>
         <Button Grid.Row="0" Click="BtnStartPolling_OnClick" Name="BtnStartPolling" Content="Start polling" HorizontalAlignment="Left" Margin="832,10,0,0" VerticalAlignment="Top" Width="75"/>
 
-        <TabControl Grid.Row="1" Margin="10" ItemsSource="{Binding Path=LogDisplayTabs}" />
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <TabControl Grid.Row="0" Margin="10" ItemsSource="{Binding Path=LogDisplayTabs}" />
+            <!--<DockPanel Grid.Row="1" Margin="5">
+                <TextBlock TextWrapping="Wrap" Text="Last poll: "/>
+                <TextBlock TextWrapping="Wrap" Text="{Binding Path=LastPollTime}" Margin="0,0,10,0"/>
+                <TextBlock TextWrapping="Wrap" Text="Last change: "/>
+                <TextBlock TextWrapping="Wrap" Text="{Binding Path=LastChangeTime}" Margin="0,0,10,0"/>
+            </DockPanel>-->
+        </Grid>
+        
     </Grid>
 </UserControl>

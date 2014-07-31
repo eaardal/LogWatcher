@@ -17,6 +17,12 @@ namespace LogWatcher.Domain
             _fileReader = new FileReader();
 
             Message.Subscribe<FileChangeDetectedMessage>(async msg => await OnFileChangeDetected(msg));
+            Message.Subscribe<FileNotFoundMessage>(OnFileNotFound);
+        }
+
+        private void OnFileNotFound(FileNotFoundMessage message)
+        {
+            _filePoller.Stop();
         }
 
         private async Task OnFileChangeDetected(FileChangeDetectedMessage message)
@@ -44,7 +50,14 @@ namespace LogWatcher.Domain
         private bool VerifyHasRequiredParameters(string[] parameters)
         {
             var filepath = parameters[0];
-            return !String.IsNullOrEmpty(filepath) && File.Exists(filepath);
+            var isValid = !String.IsNullOrEmpty(filepath) && File.Exists(filepath);
+            if (isValid)
+            {
+                return true;
+            }
+
+            Message.Publish(new FileNotFoundMessage { File = new FileInfo(filepath) });
+            return false;
         }
     }
 }

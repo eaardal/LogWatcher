@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using System.Windows;
-using System.Windows.Forms;
+﻿using System.Windows;
 using LogWatcher.ViewModels;
 
 namespace LogWatcher.Views
@@ -14,6 +12,11 @@ namespace LogWatcher.Views
             _viewModel = new MainWindowViewModel();
             InitializeComponent();
             DataContext = _viewModel;
+        }
+
+        private void CloseMessageOverlayClick(object sender, RoutedEventArgs e)
+        {
+            _viewModel.HideMessageOverlay();
         }
     }
 }

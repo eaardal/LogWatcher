@@ -38,23 +38,30 @@ namespace LogWatcher.Domain
         {
             _pollTimer.Enabled = false;
 
-            Message.Publish(new FilePollTickMessage{ File = _fileToWatch, Sender = this });
-            
-            using (var md5 = MD5.Create())
+            if (File.Exists(_fileToWatch.FullName))
             {
-                using (var stream = File.OpenRead(_fileToWatch.FullName))
-                {
-                    var hash = BitConverter.ToString(md5.ComputeHash(stream)); ;
+                Message.Publish(new FilePollTickMessage {File = _fileToWatch, Sender = this});
 
-                    if (hash != _lastFileHash)
+                using (var md5 = MD5.Create())
+                {
+                    using (var stream = File.OpenRead(_fileToWatch.FullName))
                     {
-                        Message.Publish(new FileChangeDetectedMessage { File = _fileToWatch,  Sender = this });
-                        UpdateLastFileHash(hash);
+                        var hash = BitConverter.ToString(md5.ComputeHash(stream));
+                        ;
+
+                        if (hash != _lastFileHash)
+                        {
+                            Message.Publish(new FileChangeDetectedMessage {File = _fileToWatch, Sender = this});
+                            UpdateLastFileHash(hash);
+                        }
                     }
                 }
+                _pollTimer.Enabled = true;
             }
-
-            _pollTimer.Enabled = true;
+            else
+            {
+                Message.Publish(new FileNotFoundMessage { File = _fileToWatch });
+            }
         }
 
         private void UpdateLastFileHash(string hash)
