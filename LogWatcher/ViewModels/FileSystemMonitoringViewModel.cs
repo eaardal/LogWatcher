@@ -1,43 +1,27 @@
 ﻿using System;
-using System.Globalization;
-using System.Reflection;
 using System.Windows.Forms;
 using LogWatcher.Annotations;
 using LogWatcher.Domain;
-using LogWatcher.Domain.Messages;
-using LogWatcher.Infrastructure;
-using Message = LogWatcher.Infrastructure.Message;
+using LogWatcher.Domain.Helpers;
+using LogWatcher.Domain.Settings;
 
 namespace LogWatcher.ViewModels
 {
     class FileSystemMonitoringViewModel : MonitoringViewModelBase
     {
         private readonly ILogService _logService;
-        private string _lastPollTime;
         private string _filePath;
-        private string _interval;
-        
+        private FileMonitoringSettings _settings;
+
         public FileSystemMonitoringViewModel([NotNull] ILogService logService)
         {
             if (logService == null) throw new ArgumentNullException("logService");
             _logService = logService;
+            _settings = new FileMonitoringSettings();
 
             SetDefaultValues();
-
-            Message.Subscribe<FilePollTickMessage>(OnFilePollTick);
         }
         
-        public string Interval
-        {
-            get { return _interval; }
-            set
-            {
-                if (value == _interval) return;
-                _interval = value;
-                NotifyPropertyChange();
-            }
-        }
-
         public string FilePath
         {
             get { return _filePath; }
@@ -49,13 +33,13 @@ namespace LogWatcher.ViewModels
             }
         }
 
-        public string LastPollTime
+        public FileMonitoringSettings Settings
         {
-            get { return _lastPollTime; }
-            private set
+            get { return _settings; }
+            set
             {
-                if (value == _lastPollTime) return;
-                _lastPollTime = value;
+                if (Equals(value, _settings)) return;
+                _settings = value;
                 NotifyPropertyChange();
             }
         }
@@ -64,30 +48,43 @@ namespace LogWatcher.ViewModels
         {
             if (ShouldCreateNewLogDisplay(FilePath))
             {
-                CreateNewLogDisplay<BasicLogEntry>(FilePath, GetFileName(FilePath));
-
+                CreateNewLogDisplay<BasicLogEntry>(FilePath, DiskHelpers.GetFileName(FilePath), CreateLogDisplaySettings());
+                
                 if (_logService != null)
-                    _logService.StartProcessing(FilePath, Interval);   
+                    _logService.StartProcessing(FilePath, Settings.Interval);   
             }
         }
 
-        private string GetExecutingPath()
+        private LogDisplaySettings CreateLogDisplaySettings()
         {
-            var currentLocation = Assembly.GetExecutingAssembly().Location;
-            return currentLocation.Substring(0, currentLocation.LastIndexOf('\\'));
+            var settings = new LogDisplaySettings
+            {
+                ShouldLogFileChange = Settings.ShouldLogFileChange,
+                ShouldLogFilePollTicks = Settings.ShouldLogFilePollTicks
+            };
+
+            SubscribeLogDisplaySettingsToFileMonitoringSettings(settings);
+
+            return settings;
         }
 
-        private void OnFilePollTick(FilePollTickMessage obj)
+        private void SubscribeLogDisplaySettingsToFileMonitoringSettings(LogDisplaySettings settings)
         {
-            LastPollTime = DateTime.Now.ToLongTimeString();
+            Settings.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "ShouldLogFileChange")
+                    settings.ShouldLogFileChange = Settings.ShouldLogFileChange;
+
+                if (e.PropertyName == "ShouldLogFilePollTicks")
+                    settings.ShouldLogFilePollTicks = Settings.ShouldLogFilePollTicks;
+            };
         }
 
-        private string GetFileName(string filepath)
+        private void SetDefaultValues()
         {
-            var lastIndex = filepath.LastIndexOf("\\", StringComparison.Ordinal);
-            var startindex = lastIndex + 1;
-            var length = filepath.Length;
-            return filepath.Substring(startindex, length - startindex);
+#if DEBUG
+            FilePath = DiskHelpers.GetExecutingPath() + "\\Testfile.txt";
+#endif
         }
 
         public void OpenFileDialog()
@@ -95,7 +92,7 @@ namespace LogWatcher.ViewModels
             var dialog = new OpenFileDialog
             {
                 Multiselect = false,
-                InitialDirectory = GetExecutingPath()
+                InitialDirectory = DiskHelpers.GetExecutingPath()
             };
 
             var result = dialog.ShowDialog();
@@ -103,14 +100,6 @@ namespace LogWatcher.ViewModels
             {
                 FilePath = dialog.FileName;
             }
-        }
-
-        private void SetDefaultValues()
-        {
-            Interval = Config.DefaultPollInterval.ToString(CultureInfo.InvariantCulture);
-#if DEBUG
-            FilePath = GetExecutingPath() + "\\Testfile.txt";
-#endif
         }
     }
 }

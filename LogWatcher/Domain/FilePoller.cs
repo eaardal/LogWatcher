@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Timers;
 using LogWatcher.Domain.Messages;
 using LogWatcher.Infrastructure;
@@ -24,7 +27,7 @@ namespace LogWatcher.Domain
         public void Start()
         {
             _pollTimer = new Timer(_pollInterval);
-            _pollTimer.Elapsed += OnPollTimerTick;
+            _pollTimer.Elapsed += async (s, e) => await OnPollTimerTick(s, e);
             _pollTimer.Start();
         }
 
@@ -34,29 +37,41 @@ namespace LogWatcher.Domain
             _pollTimer = null;
         }
 
-        private void OnPollTimerTick(object sender, ElapsedEventArgs elapsedEventArgs)
+        private async Task OnPollTimerTick(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             _pollTimer.Enabled = false;
 
             if (File.Exists(_fileToWatch.FullName))
             {
-                Message.Publish(new FilePollTickMessage {File = _fileToWatch, Sender = this});
+                Message.Publish(new FilePollTickMessage {File = _fileToWatch, Sender = this, Timestamp = DateTime.Now});
 
-                using (var md5 = MD5.Create())
+                try
                 {
-                    using (var stream = File.OpenRead(_fileToWatch.FullName))
+                    using (var md5 = MD5.Create())
                     {
-                        var hash = BitConverter.ToString(md5.ComputeHash(stream));
-                        ;
+                        var fileBytes = File.ReadAllBytes(_fileToWatch.FullName);
+                        var hash = BitConverter.ToString(md5.ComputeHash(fileBytes));
 
                         if (hash != _lastFileHash)
                         {
-                            Message.Publish(new FileChangeDetectedMessage {File = _fileToWatch, Sender = this});
+                            Message.Publish(new FileChangeDetectedMessage { FileBytes = fileBytes, File = _fileToWatch, Sender = this });
                             UpdateLastFileHash(hash);
                         }
                     }
+                    _pollTimer.Enabled = true;
                 }
-                _pollTimer.Enabled = true;
+                catch (FileNotFoundException)
+                {
+                    Message.Publish(new FileNotFoundMessage {File = _fileToWatch});
+                }
+                catch (IOException)
+                {
+                    Message.Publish(new CouldNotOpenFileMessage {File = _fileToWatch});
+                }
+                catch (Exception ex)
+                {
+                    Message.Publish(new GenericExceptionMessage { Exception = ex });
+                }
             }
             else
             {

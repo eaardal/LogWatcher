@@ -4,14 +4,33 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="500">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
 
-        <ListBox Grid.Row="0" FontFamily="Consolas" FontSize="12" ItemsSource="{Binding Path=LogEntries}"/>
+            <ListBox Grid.Row="0" FontFamily="Consolas" FontSize="12" ItemsSource="{Binding Path=LogEntries}"/>
+            <StatusBar Grid.Row="1" ItemsSource="{Binding Path=StatusMessages}" Height="23" Background="Beige"/>
+        </Grid>
         
+        <Grid Visibility="{Binding Path=ShouldShowLoadingScreen}">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="Black" Opacity="0.7"></Border>
+
+            <Border Grid.Row="1" Background="DimGray">
+                <TextBlock FontSize="20" TextAlignment="Center" TextWrapping="Wrap"
+                       VerticalAlignment="Center" Text="{Binding Path=LoadingScreenText}" />
+            </Border>
+            <Border Grid.Row="2" Background="Black" Opacity="0.7">
+                
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

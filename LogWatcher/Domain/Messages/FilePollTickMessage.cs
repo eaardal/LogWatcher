@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace LogWatcher.Domain.Messages
 {
@@ -6,5 +7,6 @@ namespace LogWatcher.Domain.Messages
     {
         public FilePoller Sender { get; set; }
         public FileInfo File { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }

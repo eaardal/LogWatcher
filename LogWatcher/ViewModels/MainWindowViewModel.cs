@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using LogWatcher.Domain;
 using LogWatcher.Domain.Messages;
 using LogWatcher.Infrastructure;
 
@@ -17,6 +16,12 @@ namespace LogWatcher.ViewModels
             MessageOverlayVisibility = Visibility.Hidden;
 
             Message.Subscribe<FileNotFoundMessage>(msg => ShowMessageOverlay("Could not find file " + msg.File.FullName));
+            Message.Subscribe<GenericExceptionMessage>(msg =>
+            {
+                ShowMessageOverlay("An error occurred: " + msg.Exception.Message);
+                MessageBox.Show(msg.Exception.StackTrace);
+            });
+            Message.Subscribe<CouldNotOpenFileMessage>(msg => ShowMessageOverlay("Could not open file " + msg.File.FullName));
         }
 
         public string MessageText

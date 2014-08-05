@@ -4,8 +4,10 @@ using System.Windows.Controls;
 using LogWatcher.CustomControls;
 using LogWatcher.CustomControls.Messages;
 using LogWatcher.Domain;
+using LogWatcher.Domain.Settings;
 using LogWatcher.Infrastructure;
 using LogWatcher.Views;
+using Message = LogWatcher.Infrastructure.Message;
 
 namespace LogWatcher.ViewModels
 {
@@ -34,11 +36,15 @@ namespace LogWatcher.ViewModels
             return !LogDisplays.Contains(identifier);
         }
 
-        protected void CreateNewLogDisplay<TLogEntry>(string identifier, string displayTitle) where TLogEntry : BasicLogEntry
+        protected void CreateNewLogDisplay<TLogEntry>(string identifier, string displayTitle, LogDisplaySettings settings) where TLogEntry : BasicLogEntry
         {
             if (ShouldCreateNewLogDisplay(identifier))
             {
-                var viewModel = new LogDisplayViewModel<TLogEntry> {EntryIdentifier = identifier};
+                var viewModel = new LogDisplayViewModel<TLogEntry>
+                {
+                    EntryIdentifier = identifier, 
+                    Settings = settings
+                };
                 var view = new LogDisplayView();
                 view.SetViewModel(viewModel);
                 
@@ -56,9 +62,9 @@ namespace LogWatcher.ViewModels
             }
         }
 
-        protected void CreateNewLogDisplay<TLogEntry>(string identifier) where TLogEntry : BasicLogEntry
+        protected void CreateNewLogDisplay<TLogEntry>(string identifier, LogDisplaySettings settings) where TLogEntry : BasicLogEntry
         {
-            CreateNewLogDisplay<TLogEntry>(identifier, identifier);
+            CreateNewLogDisplay<TLogEntry>(identifier, identifier, settings);
         }
     }
 }

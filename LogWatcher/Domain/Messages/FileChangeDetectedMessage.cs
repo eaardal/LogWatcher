@@ -6,5 +6,6 @@ namespace LogWatcher.Domain.Messages
     {
         public FilePoller Sender { get; set; }
         public FileInfo File { get; set; }
+        public byte[] FileBytes { get; set; }
     }
 }

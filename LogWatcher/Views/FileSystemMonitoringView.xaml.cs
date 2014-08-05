@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Forms;
 using LogWatcher.Domain;
 using LogWatcher.ViewModels;
 
@@ -24,6 +23,11 @@ namespace LogWatcher.Views
         private void BtnBrowse_OnClick(object sender, RoutedEventArgs e)
         {
             _viewModel.OpenFileDialog();
+        }
+
+        private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            new SettingsView(_viewModel.Settings).Show();
         }
     }
 }

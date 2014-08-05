@@ -1,6 +1,7 @@
 ﻿using System;
 using LogWatcher.Domain;
 using LogWatcher.Domain.Messages;
+using LogWatcher.Domain.Settings;
 using LogWatcher.HttpInterface;
 using LogWatcher.Infrastructure;
 
@@ -49,7 +50,7 @@ namespace LogWatcher.ViewModels
         private void OnReceivedHttpBasicLogEntry(ReceivedHttpLogEntryMessage<BasicLogEntry> message)
         {
             if (ShouldCreateNewLogDisplay(message.LogEntry))
-                CreateNewLogDisplay<BasicLogEntry>(message.LogEntry.SourceIdentifier);
+                CreateNewLogDisplay<BasicLogEntry>(message.LogEntry.SourceIdentifier, new LogDisplaySettings());
 
             Message.Publish(new NewLogEntryMessage<BasicLogEntry> { LogEntry = message.LogEntry });
         }
@@ -57,7 +58,7 @@ namespace LogWatcher.ViewModels
         private void OnReceivedHttpLogEntry(ReceivedHttpLogEntryMessage<LogEntry> message)
         {
             if (ShouldCreateNewLogDisplay(message.LogEntry))
-                CreateNewLogDisplay<LogEntry>(message.LogEntry.SourceIdentifier);
+                CreateNewLogDisplay<LogEntry>(message.LogEntry.SourceIdentifier, new LogDisplaySettings());
 
             Message.Publish(new NewLogEntryMessage<LogEntry> {LogEntry = message.LogEntry});
         }

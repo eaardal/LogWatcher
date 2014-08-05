@@ -15,7 +15,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -32,6 +32,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>logwatcher.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
@@ -52,6 +55,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Printing" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,22 +85,31 @@
     <Compile Include="Domain\BasicTextFormat.cs" />
     <Compile Include="Domain\FilePoller.cs" />
     <Compile Include="Domain\FileReader.cs" />
+    <Compile Include="Domain\Helpers\DiskHelpers.cs" />
     <Compile Include="Domain\Helpers\JsonHelpers.cs" />
     <Compile Include="Domain\Helpers\LogEntryValidator.cs" />
     <Compile Include="Domain\IBasicLogEntryFormat.cs" />
     <Compile Include="Domain\ILogService.cs" />
     <Compile Include="Domain\LogEntry.cs" />
     <Compile Include="Domain\FileLogService.cs" />
+    <Compile Include="Domain\Messages\CouldNotOpenFileMessage.cs" />
     <Compile Include="Domain\Messages\FileChangeDetectedMessage.cs" />
     <Compile Include="Domain\Messages\FileNotFoundMessage.cs" />
     <Compile Include="Domain\Messages\FilePollTickMessage.cs" />
+    <Compile Include="Domain\Messages\GenericExceptionMessage.cs" />
+    <Compile Include="Domain\Messages\HideLoadingScreenMessage.cs" />
     <Compile Include="Domain\Messages\NewLogEntryMessage.cs" />
     <Compile Include="Domain\Messages\PollIntervalNotValidMessage.cs" />
     <Compile Include="Domain\Messages\ReceivedHttpLogEntryMessage.cs" />
+    <Compile Include="Domain\Messages\ShowLoadingScreenMessage.cs" />
+    <Compile Include="Domain\Messages\UpdateLoadingScreenTextMessage.cs" />
+    <Compile Include="Domain\Settings\FileMonitoringSettings.cs" />
+    <Compile Include="Domain\Settings\LogDisplaySettings.cs" />
     <Compile Include="HttpInterface\LogWatcherHttpServer.cs" />
     <Compile Include="HttpInterface\ReceivalController.cs" />
     <Compile Include="Infrastructure\Config.cs" />
     <Compile Include="Infrastructure\Message.cs" />
+    <Compile Include="Infrastructure\NotifyPropertyChanged.cs" />
     <Compile Include="Infrastructure\ViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\FileSystemMonitoringViewModel.cs" />
@@ -105,6 +118,7 @@
     <Compile Include="ViewModels\LogDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MonitoringViewModelBase.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\FileSystemMonitoringView.xaml.cs">
       <DependentUpon>FileSystemMonitoringView.xaml</DependentUpon>
     </Compile>
@@ -123,6 +137,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Page Include="CustomControls\TabCloseButtonView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -147,6 +164,10 @@
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +199,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="logwatcher.ico" />
     <Content Include="Testfile.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

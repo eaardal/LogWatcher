@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using LogWatcher.Domain.Messages;
 using LogWatcher.Infrastructure;
@@ -27,11 +26,32 @@ namespace LogWatcher.Domain
 
         private async Task OnFileChangeDetected(FileChangeDetectedMessage message)
         {
-            var newLines = await _fileReader.ReadChanges(message.File);
-            newLines.ToList().ForEach(line => Message.Publish(new NewLogEntryMessage<BasicLogEntry>
+            try
             {
-                LogEntry = BasicLogEntry.Parse(new BasicTextFormat(), message.File.FullName, line)
-            }));
+                var identifier = message.File.FullName;
+                Message.Publish(new ShowLoadingScreenMessage { Identifier =identifier, Message = "Reading changes..." });
+
+                var newLines = await _fileReader.ReadChanges(message.FileBytes, identifier);
+
+                await Task.Run(() =>
+                {
+                    Message.Publish(new UpdateLoadingScreenTextMessage(identifier, "Parsing changes..."));
+
+                    foreach (var line in newLines)
+                    {
+                        Message.Publish(new NewLogEntryMessage<BasicLogEntry>
+                        {
+                            LogEntry = BasicLogEntry.Parse(new BasicTextFormat(), identifier, line)
+                        });
+                    }
+                });
+
+                Message.Publish(new HideLoadingScreenMessage { Identifier = identifier });
+            }
+            catch (Exception ex)
+            {
+                Message.Publish(new GenericExceptionMessage(ex));
+            }
         }
 
         public void StartProcessing(params string[] parameters)
