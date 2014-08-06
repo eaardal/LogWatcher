@@ -51,20 +51,43 @@ namespace LogWatcher.ViewModels
                 CreateNewLogDisplay<BasicLogEntry>(FilePath, DiskHelpers.GetFileName(FilePath), CreateLogDisplaySettings());
                 
                 if (_logService != null)
-                    _logService.StartProcessing(FilePath, Settings.Interval);   
+                    _logService.StartProcessing(CreateFileLogServiceSettings());   
             }
+        }
+
+        private FileLogServiceSettings CreateFileLogServiceSettings()
+        {
+            var settings = new FileLogServiceSettings
+            {
+                FilePath = FilePath,
+                FilePollInterval = Int32.Parse(Settings.Interval),
+                ShouldLogFilePollTicks = Settings.ShouldLogFilePollTicks
+            };
+
+            SubscribeFileLogServiceSettingsToFileMonitoringSettings(settings);
+            return settings;
+        }
+
+        private void SubscribeFileLogServiceSettingsToFileMonitoringSettings(FileLogServiceSettings settings)
+        {
+            Settings.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "ShouldLogFilePollTicks")
+                    settings.ShouldLogFilePollTicks = Settings.ShouldLogFilePollTicks;
+
+                if (e.PropertyName == "Interval")
+                    settings.FilePollInterval = Int32.Parse(Settings.Interval);
+            };
         }
 
         private LogDisplaySettings CreateLogDisplaySettings()
         {
             var settings = new LogDisplaySettings
             {
-                ShouldLogFileChange = Settings.ShouldLogFileChange,
-                ShouldLogFilePollTicks = Settings.ShouldLogFilePollTicks
+                ShouldLogFileChange = Settings.ShouldLogFileChange
             };
 
             SubscribeLogDisplaySettingsToFileMonitoringSettings(settings);
-
             return settings;
         }
 
@@ -74,9 +97,6 @@ namespace LogWatcher.ViewModels
             {
                 if (e.PropertyName == "ShouldLogFileChange")
                     settings.ShouldLogFileChange = Settings.ShouldLogFileChange;
-
-                if (e.PropertyName == "ShouldLogFilePollTicks")
-                    settings.ShouldLogFilePollTicks = Settings.ShouldLogFilePollTicks;
             };
         }
 

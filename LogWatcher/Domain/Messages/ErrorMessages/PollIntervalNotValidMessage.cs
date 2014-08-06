@@ -1,4 +1,4 @@
-﻿namespace LogWatcher.Domain.Messages
+﻿namespace LogWatcher.Domain.Messages.ErrorMessages
 {
     class PollIntervalNotValidMessage
     {

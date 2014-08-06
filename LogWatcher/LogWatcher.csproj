@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="Domain\BasicLogEntry.cs" />
     <Compile Include="Domain\BasicTextFormat.cs" />
+    <Compile Include="Domain\FileChangeInfo.cs" />
     <Compile Include="Domain\FilePoller.cs" />
     <Compile Include="Domain\FileReader.cs" />
     <Compile Include="Domain\Helpers\DiskHelpers.cs" />
@@ -92,17 +93,20 @@
     <Compile Include="Domain\ILogService.cs" />
     <Compile Include="Domain\LogEntry.cs" />
     <Compile Include="Domain\FileLogService.cs" />
-    <Compile Include="Domain\Messages\CouldNotOpenFileMessage.cs" />
+    <Compile Include="Domain\Messages\ErrorMessages\CouldNotOpenFileMessage.cs" />
+    <Compile Include="Domain\Messages\ErrorMessages\FileNotFoundMessage.cs" />
+    <Compile Include="Domain\Messages\ErrorMessages\GenericExceptionMessage.cs" />
+    <Compile Include="Domain\Messages\ErrorMessages\PollIntervalNotValidMessage.cs" />
     <Compile Include="Domain\Messages\FileChangeDetectedMessage.cs" />
-    <Compile Include="Domain\Messages\FileNotFoundMessage.cs" />
-    <Compile Include="Domain\Messages\FilePollTickMessage.cs" />
-    <Compile Include="Domain\Messages\GenericExceptionMessage.cs" />
     <Compile Include="Domain\Messages\HideLoadingScreenMessage.cs" />
+    <Compile Include="Domain\Messages\LogWatcherMessage.cs" />
+    <Compile Include="Domain\Messages\NewLogEntriesMessage.cs" />
     <Compile Include="Domain\Messages\NewLogEntryMessage.cs" />
-    <Compile Include="Domain\Messages\PollIntervalNotValidMessage.cs" />
     <Compile Include="Domain\Messages\ReceivedHttpLogEntryMessage.cs" />
     <Compile Include="Domain\Messages\ShowLoadingScreenMessage.cs" />
+    <Compile Include="Domain\Messages\StatusBarMessage.cs" />
     <Compile Include="Domain\Messages\UpdateLoadingScreenTextMessage.cs" />
+    <Compile Include="Domain\Settings\FileLogServiceSettings.cs" />
     <Compile Include="Domain\Settings\FileMonitoringSettings.cs" />
     <Compile Include="Domain\Settings\LogDisplaySettings.cs" />
     <Compile Include="HttpInterface\LogWatcherHttpServer.cs" />

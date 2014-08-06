@@ -1,13 +1,11 @@
 ﻿namespace LogWatcher.Domain.Messages
 {
-    class UpdateLoadingScreenTextMessage
+    class UpdateLoadingScreenTextMessage : LogWatcherMessage
     {
         public string Msg { get; set; }
-        public string Identifier { get; set; }
 
-        public UpdateLoadingScreenTextMessage(string identifier, string msg)
+        public UpdateLoadingScreenTextMessage(string identifier, string msg) : base(identifier)
         {
-            Identifier = identifier;
             Msg = msg;
         }
     }

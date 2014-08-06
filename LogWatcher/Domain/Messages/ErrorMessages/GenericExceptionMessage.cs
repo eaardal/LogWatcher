@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LogWatcher.Domain.Messages
+namespace LogWatcher.Domain.Messages.ErrorMessages
 {
     public class GenericExceptionMessage
     {

@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Timers;
 using LogWatcher.Domain.Messages;
+using LogWatcher.Domain.Messages.ErrorMessages;
 using LogWatcher.Infrastructure;
 
 namespace LogWatcher.Domain
@@ -23,6 +24,8 @@ namespace LogWatcher.Domain
             _fileToWatch = fileToWatch;
             _pollInterval = pollInterval;
         }
+
+        public bool ShouldLogPollTicks { get; set; }
 
         public void Start()
         {
@@ -43,30 +46,35 @@ namespace LogWatcher.Domain
 
             if (File.Exists(_fileToWatch.FullName))
             {
-                Message.Publish(new FilePollTickMessage {File = _fileToWatch, Sender = this, Timestamp = DateTime.Now});
+                if (ShouldLogPollTicks)
+                    Message.Publish(new StatusBarMessage(_fileToWatch.FullName) { Text = "Polling " + _fileToWatch.FullName });
 
                 try
                 {
-                    using (var md5 = MD5.Create())
+                    await Task.Run(() =>
                     {
-                        var fileBytes = File.ReadAllBytes(_fileToWatch.FullName);
-                        var hash = BitConverter.ToString(md5.ComputeHash(fileBytes));
-
-                        if (hash != _lastFileHash)
+                        using (var md5 = MD5.Create())
                         {
-                            Message.Publish(new FileChangeDetectedMessage { FileBytes = fileBytes, File = _fileToWatch, Sender = this });
-                            UpdateLastFileHash(hash);
+                            var fileBytes = File.ReadAllBytes(_fileToWatch.FullName);
+                            var hash = BitConverter.ToString(md5.ComputeHash(fileBytes));
+                            
+                            if (hash != _lastFileHash)
+                            {
+                                Message.Publish(new FileChangeDetectedMessage { FileBytes = fileBytes, File = _fileToWatch, Sender = this });
+                                UpdateLastFileHash(hash);
+                            }
                         }
-                    }
-                    _pollTimer.Enabled = true;
+
+                        _pollTimer.Enabled = true;
+                    });
                 }
                 catch (FileNotFoundException)
                 {
-                    Message.Publish(new FileNotFoundMessage {File = _fileToWatch});
+                    Message.Publish(new FileNotFoundMessage { File = _fileToWatch });
                 }
                 catch (IOException)
                 {
-                    Message.Publish(new CouldNotOpenFileMessage {File = _fileToWatch});
+                    Message.Publish(new CouldNotOpenFileMessage { File = _fileToWatch });
                 }
                 catch (Exception ex)
                 {

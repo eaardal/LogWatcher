@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using LogWatcher.Domain.Messages;
+using LogWatcher.Domain.Messages.ErrorMessages;
+using LogWatcher.Domain.Settings;
 using LogWatcher.Infrastructure;
 
 namespace LogWatcher.Domain
@@ -29,24 +33,11 @@ namespace LogWatcher.Domain
             try
             {
                 var identifier = message.File.FullName;
-                Message.Publish(new ShowLoadingScreenMessage { Identifier =identifier, Message = "Reading changes..." });
+                var fileChangeInfo = await _fileReader.ReadChanges(message.FileBytes, identifier);
 
-                var newLines = await _fileReader.ReadChanges(message.FileBytes, identifier);
+                var logEntries = fileChangeInfo.ChangedLines.Select(line => BasicLogEntry.Parse(new BasicTextFormat(), identifier, line.Value, line.Key));
 
-                await Task.Run(() =>
-                {
-                    Message.Publish(new UpdateLoadingScreenTextMessage(identifier, "Parsing changes..."));
-
-                    foreach (var line in newLines)
-                    {
-                        Message.Publish(new NewLogEntryMessage<BasicLogEntry>
-                        {
-                            LogEntry = BasicLogEntry.Parse(new BasicTextFormat(), identifier, line)
-                        });
-                    }
-                });
-
-                Message.Publish(new HideLoadingScreenMessage { Identifier = identifier });
+                Message.Publish(new NewLogEntriesMessage<BasicLogEntry>(identifier) { LogEntries = logEntries });
             }
             catch (Exception ex)
             {
@@ -54,39 +45,24 @@ namespace LogWatcher.Domain
             }
         }
 
-        public void StartProcessing(params string[] parameters)
+        public void StartProcessing(FileLogServiceSettings settings)
         {
-            if (!VerifyHasRequiredParameters(parameters)) return;
+            var file = new FileInfo(settings.FilePath);
+            if (!file.Exists) return;
 
-            var filePath = parameters[0];
-            var pollInterval = Convert.ToInt32(parameters[1]);
+            _filePoller = new FilePoller(file, settings.FilePollInterval) { ShouldLogPollTicks = settings.ShouldLogFilePollTicks };
+            _filePoller.Start();
 
-            var file = new FileInfo(filePath);
-            if (file.Exists)
-            {
-                _filePoller = new FilePoller(file, pollInterval);
-                _filePoller.Start();
-            }
+            SubscribeToSettingsChanges(settings);
         }
 
-        private bool VerifyHasRequiredParameters(string[] parameters)
+        private void SubscribeToSettingsChanges(FileLogServiceSettings settings)
         {
-            var filepath = parameters[0];
-            var pollInterval = parameters[1];
-
-            var isValid = !String.IsNullOrEmpty(filepath) && File.Exists(filepath);
-            if (!isValid)
+            settings.PropertyChanged += (sender, args) =>
             {
-                Message.Publish(new FileNotFoundMessage { File = new FileInfo(filepath) });
-            }
-
-            int result;
-            isValid = !String.IsNullOrEmpty(pollInterval) && Int32.TryParse(pollInterval, out result) && result > 500;
-            
-            if (!isValid)
-                Message.Publish(new PollIntervalNotValidMessage { PollInterval = pollInterval, Sender = this});
-
-            return isValid;
+                if (args.PropertyName == "ShouldLogFilePollTicks")
+                    _filePoller.ShouldLogPollTicks = settings.ShouldLogFilePollTicks;
+            };
         }
     }
 }

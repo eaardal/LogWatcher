@@ -2,6 +2,6 @@
 {
     internal interface IBasicLogEntryFormat
     {
-        BasicLogEntry Parse(string identifier, string text);
+        BasicLogEntry Parse(string identifier, string text, int lineNr);
     }
 }

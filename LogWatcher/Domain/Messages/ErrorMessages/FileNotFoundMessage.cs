@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace LogWatcher.Domain.Messages
+namespace LogWatcher.Domain.Messages.ErrorMessages
 {
     internal class FileNotFoundMessage
     {

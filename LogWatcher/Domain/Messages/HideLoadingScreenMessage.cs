@@ -1,7 +1,9 @@
 ﻿namespace LogWatcher.Domain.Messages
 {
-    class HideLoadingScreenMessage
+    class HideLoadingScreenMessage : LogWatcherMessage
     {
-        public string Identifier { get; set; }
+        public HideLoadingScreenMessage(string identifier) : base(identifier)
+        {
+        }
     }
 }

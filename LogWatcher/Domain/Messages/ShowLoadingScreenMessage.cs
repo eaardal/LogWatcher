@@ -1,10 +1,11 @@
 ﻿namespace LogWatcher.Domain.Messages
 {
-    class ShowLoadingScreenMessage
+    class ShowLoadingScreenMessage : LogWatcherMessage
     {
-        public string Identifier { get; set; }
+        public ShowLoadingScreenMessage(string identifier) : base(identifier)
+        {
+        }
+
         public string Message { get; set; }
-        public int DurationMilliseconds { get; set; }
-        public bool UseDuration { get; set; }
     }
 }

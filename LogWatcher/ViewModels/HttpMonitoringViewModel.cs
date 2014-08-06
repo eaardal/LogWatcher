@@ -52,7 +52,7 @@ namespace LogWatcher.ViewModels
             if (ShouldCreateNewLogDisplay(message.LogEntry))
                 CreateNewLogDisplay<BasicLogEntry>(message.LogEntry.SourceIdentifier, new LogDisplaySettings());
 
-            Message.Publish(new NewLogEntryMessage<BasicLogEntry> { LogEntry = message.LogEntry });
+            Message.Publish(new NewLogEntryMessage<BasicLogEntry>(message.LogEntry.SourceIdentifier) { LogEntry = message.LogEntry });
         }
 
         private void OnReceivedHttpLogEntry(ReceivedHttpLogEntryMessage<LogEntry> message)
@@ -60,7 +60,7 @@ namespace LogWatcher.ViewModels
             if (ShouldCreateNewLogDisplay(message.LogEntry))
                 CreateNewLogDisplay<LogEntry>(message.LogEntry.SourceIdentifier, new LogDisplaySettings());
 
-            Message.Publish(new NewLogEntryMessage<LogEntry> {LogEntry = message.LogEntry});
+            Message.Publish(new NewLogEntryMessage<LogEntry>(message.LogEntry.SourceIdentifier) {LogEntry = message.LogEntry});
         }
 
         private bool ShouldCreateNewLogDisplay(BasicLogEntry logEntry)

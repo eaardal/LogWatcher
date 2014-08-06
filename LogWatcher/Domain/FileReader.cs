@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LogWatcher.Domain.Messages;
+using LogWatcher.Infrastructure;
 
 namespace LogWatcher.Domain
 {
@@ -16,27 +18,17 @@ namespace LogWatcher.Domain
             _lineNumbersCache = new Dictionary<string, int>();
         }
 
-        public async Task<IEnumerable<string>> ReadChanges(FileStream stream, string identifier)
+        public async Task<FileChangeInfo> ReadChanges(byte[] fileBytes, string identifier)
         {
-            return await Task.Run(async () =>
-            {
-                var allLines = new List<string>();
-
-                using (var sr = new StreamReader(stream))
-                {
-                    allLines.Add(await sr.ReadLineAsync());
-                }
-
-                return await ReadChanges(allLines, identifier);
-            });
+            var allLines = await ReadAllLines(fileBytes);
+            return await ReadNewLines(allLines, identifier);
         }
 
-        public async Task<IEnumerable<string>> ReadChanges(byte[] fileBytes, string identifier)
+        private async Task<Dictionary<int, string>> ReadAllLines(byte[] fileBytes)
         {
-            return await Task.Run(async () =>
+            return await Task.Run(() =>
             {
-                var allLines = new List<string>();
-                var lineCount = 0;
+                var allLines = new Dictionary<int, string>();
 
                 using (var memoryStream = new MemoryStream(fileBytes))
                 using (var bufferedStream = new BufferedStream(memoryStream))
@@ -44,11 +36,12 @@ namespace LogWatcher.Domain
                 {
                     try
                     {
+                        var lineNr = 0;
                         string line;
                         while ((line = streamReader.ReadLine()) != null)
                         {
-                            allLines.Add(line);
-                            lineCount++;
+                            lineNr++;
+                            allLines.Add(lineNr, line);
                         }
                     }
                     catch (Exception ex)
@@ -56,15 +49,15 @@ namespace LogWatcher.Domain
                         Debug.WriteLine(ex.Message);
                     }
                 }
-
-                return await ReadChanges(allLines, identifier, lineCount);
+                return allLines;
             });
         }
 
-        private async Task<IEnumerable<string>> ReadChanges(IReadOnlyCollection<string> allLines, string identifier, int lineCount = 0)
+        private async Task<FileChangeInfo> ReadNewLines(Dictionary<int, string> allLines, string identifier, int lineCount = 0)
         {
             return await Task.Run(() =>
             {
+                var newLines = new Dictionary<int, string>();
                 var currentLineCount = lineCount > 0 ? lineCount : allLines.Count();
 
                 if (HasBeenReadPreviously(identifier))
@@ -72,34 +65,29 @@ namespace LogWatcher.Domain
                     if (HasMoreLinesThanLastRead(identifier, currentLineCount))
                     {
                         var cachedLineCount = GetPreviousMaxLineFromCache(identifier);
-                        var newLines = GetNewLines(allLines, cachedLineCount, currentLineCount);
+                        newLines = GetNewLines(allLines, cachedLineCount, currentLineCount);
 
                         UpdateLineCountCache(identifier, currentLineCount);
-
-                        return newLines;
                     }
                 }
                 else
                 {
                     AddToLineCountCache(identifier, currentLineCount);
-                    return allLines;
+                    newLines = allLines;
                 }
-                return new List<string>();
+
+                var newLinesCount = newLines.Count;
+                Message.Publish(new StatusBarMessage(identifier) { Text = "Read " + newLinesCount + " new lines" });
+
+                return new FileChangeInfo { Identifier = identifier, ChangedLines = newLines, LineCount = newLinesCount };
             });
         }
 
-        public async Task<IEnumerable<string>> ReadChanges(FileInfo file)
+        private Dictionary<int, string> GetNewLines(Dictionary<int, string> allLines, int cachedLineCount, int currentLineCount)
         {
-            return await Task.Run(async () =>
-            {
-                var allLines = File.ReadAllLines(file.FullName);
-                return await ReadChanges(allLines, file.FullName);
-            });
-        }
-
-        private IEnumerable<string> GetNewLines(IEnumerable<string> allLines, int cachedLineCount, int currentLineCount)
-        {
-            return allLines.Skip(cachedLineCount).Take(currentLineCount - cachedLineCount);
+            return allLines.Skip(cachedLineCount)
+                           .Take(currentLineCount - cachedLineCount)
+                           .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         private void UpdateLineCountCache(string file, int count)

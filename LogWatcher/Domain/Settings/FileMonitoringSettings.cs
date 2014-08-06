@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using LogWatcher.Infrastructure;
 
 namespace LogWatcher.Domain.Settings
@@ -48,7 +49,8 @@ namespace LogWatcher.Domain.Settings
             get { return _interval; }
             set
             {
-                if (value == _interval) return;
+                int result;
+                if (value == _interval || !Int32.TryParse(value, out result)) return;
                 _interval = value;
                 NotifyPropertyChange();
             }
