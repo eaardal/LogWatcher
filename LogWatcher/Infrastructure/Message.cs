@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace LogWatcher.Infrastructure
 {
-    public delegate void MessageSentDemoEventHandler<in TMessage>(TMessage e);
+    public delegate void SendMessageEventHandler<in TMessage>(TMessage e);
 
     public class Message
     {
@@ -29,7 +29,7 @@ namespace LogWatcher.Infrastructure
 
         private class MessageDistributor<TMessage>
         {
-            public static event MessageSentDemoEventHandler<TMessage> MessageSent;
+            public static event SendMessageEventHandler<TMessage> MessageSent;
 
             public static void ClearAllSubscriptions()
             {
