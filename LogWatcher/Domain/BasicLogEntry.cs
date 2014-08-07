@@ -1,5 +1,6 @@
 ﻿using System;
 using LogWatcher.Domain.Helpers;
+using Newtonsoft.Json;
 
 namespace LogWatcher.Domain
 {
@@ -7,6 +8,8 @@ namespace LogWatcher.Domain
     {
         public string SourceIdentifier { get; set; }
         public string Text { get; set; }
+
+        [JsonIgnore]
         public int LineNr { get; set; }
 
         public static BasicLogEntry Parse(IBasicLogEntryFormat entryFormat, string identifier, string text, int lineNr)
