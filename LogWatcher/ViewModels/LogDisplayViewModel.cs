@@ -135,7 +135,7 @@ namespace LogWatcher.ViewModels
             if (IsLogDisplayForLogObject(message.Identifier))
             {
                 if (Settings.ShouldLogFileChange)
-                    AddStatusMessage("Change detecetd", message.TimestampTicks);
+                    AddStatusMessage("Change detected", message.TimestampTicks);
                 
                 AddToLogOutput(message.LogEntries);
             }
@@ -154,9 +154,13 @@ namespace LogWatcher.ViewModels
 
         private void AddStatusMessage(string msg, long timestampTicks)
         {
-            _statusMessageCache.Add(timestampTicks, String.Format("{0}: {1}\t", DateTime.Now.ToLongTimeString(), msg));
-            var orderedMessages = _statusMessageCache.OrderByDescending(x => x.Key).Select(x => x.Value).ToList();
-            StatusMessages = new ObservableCollection<string>(orderedMessages);
+            if (!_statusMessageCache.ContainsKey(timestampTicks))
+            {
+                _statusMessageCache.Add(timestampTicks,
+                    String.Format("{0}: {1}\t", DateTime.Now.ToLongTimeString(), msg));
+                var orderedMessages = _statusMessageCache.OrderByDescending(x => x.Key).Select(x => x.Value).ToList();
+                StatusMessages = new ObservableCollection<string>(orderedMessages);
+            }
         }
 
         private void AddToLogOutput(IEnumerable<TLogEntry> entries)
