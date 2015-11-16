@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 
 namespace LogWatcher.Domain.Helpers
@@ -17,6 +18,19 @@ namespace LogWatcher.Domain.Helpers
             var startindex = lastIndex + 1;
             var length = filepath.Length;
             return filepath.Substring(startindex, length - startindex);
+        }
+
+        public static string GetDirectoryName(string path)
+        {
+            if (!path.EndsWith("\\"))
+            {
+                path += "\\";
+            }
+
+            var directoryPath = Path.GetDirectoryName(path);
+            var lastPathComponent = Path.GetFileName(directoryPath);
+
+            return lastPathComponent;
         }
     }
 }

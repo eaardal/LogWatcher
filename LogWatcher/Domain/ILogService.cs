@@ -4,6 +4,6 @@ namespace LogWatcher.Domain
 {
     internal interface ILogService
     {
-        void StartProcessing(FileLogServiceSettings settings);
+        void StartProcessing(ILogServiceSettings settings);
     }
 }

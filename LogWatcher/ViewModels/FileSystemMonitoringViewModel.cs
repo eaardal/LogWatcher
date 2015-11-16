@@ -60,8 +60,8 @@ namespace LogWatcher.ViewModels
             var settings = new FileLogServiceSettings
             {
                 FilePath = FilePath,
-                FilePollInterval = Int32.Parse(Settings.Interval),
-                ShouldLogFilePollTicks = Settings.ShouldLogFilePollTicks
+                PollInterval = Int32.Parse(Settings.Interval),
+                ShouldLogPollTicks = Settings.ShouldLogFilePollTicks
             };
 
             SubscribeFileLogServiceSettingsToFileMonitoringSettings(settings);
@@ -72,11 +72,11 @@ namespace LogWatcher.ViewModels
         {
             Settings.PropertyChanged += (s, e) =>
             {
-                if (e.PropertyName == "ShouldLogFilePollTicks")
-                    settings.ShouldLogFilePollTicks = Settings.ShouldLogFilePollTicks;
+                if (e.PropertyName == "ShouldLogPollTicks")
+                    settings.ShouldLogPollTicks = Settings.ShouldLogFilePollTicks;
 
                 if (e.PropertyName == "Interval")
-                    settings.FilePollInterval = Int32.Parse(Settings.Interval);
+                    settings.PollInterval = Int32.Parse(Settings.Interval);
             };
         }
 

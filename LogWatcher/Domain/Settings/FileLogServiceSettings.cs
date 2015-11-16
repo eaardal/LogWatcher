@@ -2,30 +2,30 @@
 
 namespace LogWatcher.Domain.Settings
 {
-    class FileLogServiceSettings : NotifyPropertyChanged
+    class FileLogServiceSettings : NotifyPropertyChanged, ILogServiceSettings
     {
-        private bool _shouldLogFilePollTicks;
-        private int _filePollInterval;
+        private bool _shouldLogPollTicks;
+        private int _pollInterval;
         private string _filePath;
 
-        public bool ShouldLogFilePollTicks
+        public bool ShouldLogPollTicks
         {
-            get { return _shouldLogFilePollTicks; }
+            get { return _shouldLogPollTicks; }
             set
             {
-                if (value.Equals(_shouldLogFilePollTicks)) return;
-                _shouldLogFilePollTicks = value;
+                if (value.Equals(_shouldLogPollTicks)) return;
+                _shouldLogPollTicks = value;
                 NotifyPropertyChange();
             }
         }
 
-        public int FilePollInterval
+        public int PollInterval
         {
-            get { return _filePollInterval; }
+            get { return _pollInterval; }
             set
             {
-                if (value == _filePollInterval) return;
-                _filePollInterval = value;
+                if (value == _pollInterval) return;
+                _pollInterval = value;
                 NotifyPropertyChange();
             }
         }

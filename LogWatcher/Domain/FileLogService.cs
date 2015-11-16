@@ -45,23 +45,25 @@ namespace LogWatcher.Domain
             }
         }
 
-        public void StartProcessing(FileLogServiceSettings settings)
+        public void StartProcessing(ILogServiceSettings settings)
         {
-            var file = new FileInfo(settings.FilePath);
+            var fileSettings = (FileLogServiceSettings) settings;
+            var file = new FileInfo(fileSettings.FilePath);
+
             if (!file.Exists) return;
 
-            _filePoller = new FilePoller(file, settings.FilePollInterval) { ShouldLogPollTicks = settings.ShouldLogFilePollTicks };
+            _filePoller = new FilePoller(file, settings.PollInterval) { ShouldLogPollTicks = settings.ShouldLogPollTicks };
             _filePoller.Start();
 
-            SubscribeToSettingsChanges(settings);
+            SubscribeToSettingsChanges(fileSettings);
         }
 
         private void SubscribeToSettingsChanges(FileLogServiceSettings settings)
         {
             settings.PropertyChanged += (sender, args) =>
             {
-                if (args.PropertyName == "ShouldLogFilePollTicks")
-                    _filePoller.ShouldLogPollTicks = settings.ShouldLogFilePollTicks;
+                if (args.PropertyName == "ShouldLogPollTicks")
+                    _filePoller.ShouldLogPollTicks = settings.ShouldLogPollTicks;
             };
         }
     }

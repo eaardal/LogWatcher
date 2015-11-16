@@ -16,6 +16,9 @@
                 <TabItem Header="Http monitoring">
                     <views:HttpMonitoringView />
                 </TabItem>
+                <TabItem Header="Directory monitoring">
+                    <views:DirectoryMonitoringView />
+                </TabItem>
             </TabControl>
         </Grid>
         <Grid Name="MessageOverlay" Visibility="{Binding Path=MessageOverlayVisibility}">

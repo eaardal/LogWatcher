@@ -106,8 +106,11 @@
     <Compile Include="Domain\Messages\ShowLoadingScreenMessage.cs" />
     <Compile Include="Domain\Messages\StatusBarMessage.cs" />
     <Compile Include="Domain\Messages\UpdateLoadingScreenTextMessage.cs" />
+    <Compile Include="Domain\Settings\DirectoryLogServiceSettings.cs" />
+    <Compile Include="Domain\Settings\DirectoryMonitoringSettings.cs" />
     <Compile Include="Domain\Settings\FileLogServiceSettings.cs" />
     <Compile Include="Domain\Settings\FileMonitoringSettings.cs" />
+    <Compile Include="Domain\Settings\ILogServiceSettings.cs" />
     <Compile Include="Domain\Settings\LogDisplaySettings.cs" />
     <Compile Include="HttpInterface\LogWatcherHttpServer.cs" />
     <Compile Include="HttpInterface\ReceivalController.cs" />
@@ -116,6 +119,8 @@
     <Compile Include="Infrastructure\NotifyPropertyChanged.cs" />
     <Compile Include="Infrastructure\ViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModels\DirectoryMonitoringSettingsViewModel.cs" />
+    <Compile Include="ViewModels\DirectoryMonitoringViewModel.cs" />
     <Compile Include="ViewModels\FileSystemMonitoringViewModel.cs" />
     <Compile Include="ViewModels\HttpMonitoringHelpViewModel.cs" />
     <Compile Include="ViewModels\HttpMonitoringViewModel.cs" />
@@ -123,6 +128,12 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MonitoringViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\DirectoryMonitoringSettingsView.xaml.cs">
+      <DependentUpon>DirectoryMonitoringSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DirectoryMonitoringView.xaml.cs">
+      <DependentUpon>DirectoryMonitoringView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FileSystemMonitoringView.xaml.cs">
       <DependentUpon>FileSystemMonitoringView.xaml</DependentUpon>
     </Compile>
@@ -148,6 +159,14 @@
     <Page Include="CustomControls\TabCloseButtonView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DirectoryMonitoringSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DirectoryMonitoringView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FileSystemMonitoringView.xaml">
       <SubType>Designer</SubType>
